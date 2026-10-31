@@ -63,3 +63,33 @@ def test_assistant_chat_quota_429_clean_fallback(client, monkeypatch):
     # Reply contains grounded scheme details in Markdown
     assert "### " in data["reply"]
     assert len(data["grounded_schemes"]) > 0
+
+
+def test_assistant_chat_hinglish_queries_relevance(client):
+    """Verify that natural Hinglish queries retrieve the exact corresponding welfare schemes."""
+    # 1. Widow pension in Hinglish
+    res_widow = client.post("/api/assistant/chat", json={
+        "message": "vidhwa aurat ko pension milti hai kya"
+    })
+    assert res_widow.status_code == 200
+    data_widow = res_widow.json()
+    widow_ids = [s["id"] for s in data_widow["grounded_schemes"]]
+    assert any(x in ["punjab-widow-pension", "nsap-ignwps"] for x in widow_ids)
+
+    # 2. Solar panel subsidy in Hinglish
+    res_solar = client.post("/api/assistant/chat", json={
+        "message": "solar panel lagwane ke liye subsidy kitni hai"
+    })
+    assert res_solar.status_code == 200
+    data_solar = res_solar.json()
+    solar_ids = [s["id"] for s in data_solar["grounded_schemes"]]
+    assert "pm-surya-ghar" in solar_ids
+
+    # 3. Housing financial aid in Hinglish
+    res_housing = client.post("/api/assistant/chat", json={
+        "message": "ghar banane ke liye sarkar se paisa kaise milega"
+    })
+    assert res_housing.status_code == 200
+    data_housing = res_housing.json()
+    housing_ids = [s["id"] for s in data_housing["grounded_schemes"]]
+    assert any(x in ["pmay-g", "pmay-u"] for x in housing_ids)

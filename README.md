@@ -77,7 +77,7 @@ Copy-Item .env.example .env
 
 **Expected Test Result:**
 ```text
-======================== 24 passed, 1 warning in ~12s ========================
+======================== 25 passed, 1 warning in ~12s ========================
 ```
 
 ---

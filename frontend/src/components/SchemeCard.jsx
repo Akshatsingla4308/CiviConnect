@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   CheckCircle,
+  CheckCircle2,
   Clock,
   Bookmark,
   BookmarkCheck,
@@ -177,11 +178,23 @@ export const SchemeCard = ({ scheme, isSaved = false, onSaveToggle }) => {
           </span>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{
+          display: 'flex',
+          gap: '0.5rem',
+          flexWrap: 'wrap',
+          alignItems: 'stretch'
+        }}>
           <Link
             to={`/schemes/${scheme.id}`}
             className="btn btn-primary btn-sm"
-            style={{ flex: 1 }}
+            style={{
+              flex: '1 1 180px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.35rem',
+              textAlign: 'center'
+            }}
           >
             <span>{t('schemes.viewDetails')}</span>
             <ChevronRight size={14} />
@@ -190,9 +203,19 @@ export const SchemeCard = ({ scheme, isSaved = false, onSaveToggle }) => {
           <Link
             to={`/wizard?scheme=${scheme.id}`}
             className="btn btn-secondary btn-sm"
-            title="Check eligibility for this scheme"
+            title={t('schemes.checkEligibility')}
+            aria-label={`${t('schemes.checkEligibility')} - ${getLocalizedName()}`}
+            style={{
+              flex: '1 1 160px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.35rem',
+              textAlign: 'center'
+            }}
           >
-            <span>Check</span>
+            <CheckCircle2 size={13} style={{ flexShrink: 0 }} />
+            <span>{t('schemes.checkEligibility')}</span>
           </Link>
         </div>
       </div>

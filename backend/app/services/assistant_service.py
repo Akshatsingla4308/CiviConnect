@@ -75,63 +75,145 @@ class AssistantService:
             return "hi"
         if requested_lang in ("pa", "hi"):
             return requested_lang
-        # Check Romanized Punjabi / Hindi phrases
+        # Check Romanized Punjabi / Hindi (Hinglish) phrases
         low = user_message.lower()
-        pa_phrases = ["kidan", "kiven", "tusi", "saada pind", "vazifa chahida", "scholarship chahidi", "punjab vich", "daakhla", "yojana dasso", "mainu"]
+        pa_phrases = ["kidan", "kiven", "tusi", "saada pind", "vazifa chahida", "scholarship chahidi", "punjab vich", "daakhla", "yojana dasso", "mainu", "kive"]
         if any(k in low for k in pa_phrases):
             return "pa"
-        hi_phrases = ["kaise milega", "yojana batao", "mujhe chahiye", "kya hai", "patrata kya hai", "aavedan kaise kare"]
+        hi_phrases = [
+            "kaise milega", "yojana batao", "mujhe chahiye", "kya hai", "patrata kya hai",
+            "aavedan kaise kare", "ke liye", "chahiye", "paisa kab", "lagwane", "kholne",
+            "milti hai", "banane ke liye", "kya documents", "bataiye", "batao"
+        ]
         if any(k in low for k in hi_phrases):
             return "hi"
         return "en"
 
     @staticmethod
     def retrieve_relevant_schemes(db: Session, message: str, user_profile: Optional[Dict[str, Any]] = None) -> List[DBScheme]:
-        keywords = re.findall(r'\b[a-zA-Z]{3,}\b', message.lower())
-        query = db.query(DBScheme).filter(DBScheme.status == "active")
+        low = message.lower()
+        schemes = db.query(DBScheme).filter(DBScheme.status == "active").all()
+        if not schemes:
+            return []
 
-        # Intent detection
-        is_scholarship = any(k in message.lower() for k in ["scholarship", "college", "btech", "student", "matric", "study", "vazifa", "ਵਜ਼ੀਫ਼ਾ", "छात्रवृत्ति"])
-        is_farmer = any(k in message.lower() for k in ["farmer", "kisan", "agriculture", "crop", "land", "fasal", "ਖੇਤੀ", "ਕਿਸਾਨ", "किसान"])
-        is_health = any(k in message.lower() for k in ["health", "hospital", "ayushman", "treatment", "bima", "doctor", "ਇਲਾਜ", "ਸਿਹਤ", "स्वास्थ्य"])
-        is_business = any(k in message.lower() for k in ["business", "loan", "mudra", "shop", "svanidhi", "karza", "ਲੋਨ", "ਵਪਾਰ", "ऋण", "व्यापार"])
-        is_women = any(k in message.lower() for k in ["women", "girl", "daughter", "shagun", "ashirwad", "beti", "sukanya", "ਔਰਤ", "ਧੀ", "महिला", "बेटी"])
-        is_pension = any(k in message.lower() for k in ["pension", "senior", "elderly", "old age", "atal", "ਪੈਨਸ਼ਨ", "ਬਜ਼ੁਰਗ", "पेंशन"])
-        is_punjab = any(k in message.lower() for k in ["punjab", "pb", "ludhiana", "amritsar", "jalandhar", "patiala", "mohali", "bathinda", "ਪੰਜਾਬ", "पंजाब"])
+        # Comprehensive semantic & Hinglish dictionary
+        INTENT_MAP = {
+            "housing": {
+                "keywords": ["awas", "housing", "pmay", "ghar", "makaan", "chhat", "home", "shelter", "colony", "ਮਕਾਨ", "ਘਰ", "ਆਵਾਸ", "आवास", "घर", "मकान"],
+                "boost_ids": ["pmay-g", "pmay-u"],
+                "boost_categories": ["housing"]
+            },
+            "widow": {
+                "keywords": ["widow", "vidhwa", "vidva", "destitute", "bewa", "विधवा", "ਵਿਧਵਾ", "ignwps"],
+                "boost_ids": ["punjab-widow-pension", "nsap-ignwps"],
+                "boost_categories": ["social_security", "pension"]
+            },
+            "disability": {
+                "keywords": ["disability", "disabled", "divyang", "viklang", "handicap", "udid", "igndps", "ਦਿਵਿਆਂਗ", "ਅੰਗਹੀਣ", "दिव्यांग", "विकलांग"],
+                "boost_ids": ["punjab-disability-pension", "nsap-igndps"],
+                "boost_categories": ["social_security", "pension"]
+            },
+            "solar": {
+                "keywords": ["solar", "surya", "bijli", "electricity", "urja", "panel", "rooftop", "sun", "ਊਰਜਾ", "ਬਿਜਲੀ", "ਸੂਰਜ", "सौर", "बिजली", "सूर्य"],
+                "boost_ids": ["pm-surya-ghar", "pm-kusum"],
+                "boost_categories": ["infrastructure", "agriculture"]
+            },
+            "business_loan": {
+                "keywords": ["dukan", "shop", "business", "loan", "karz", "mudra", "svanidhi", "pmegp", "vyapar", "startup", "vendor", "rehri", "feriwala", "ਵਪਾਰ", "ਦੁਕਾਨ", "ਲੋਨ", "ਕਰਜ਼ਾ", "व्यापार", "दुकान", "ऋण", "मुद्रा"],
+                "boost_ids": ["pm-mudra-yojana", "pm-svanidhi", "pmegp", "stand-up-india"],
+                "boost_categories": ["employment", "business", "financial_support"]
+            },
+            "girl_child": {
+                "keywords": ["beti", "daughter", "girl", "kanya", "sukanya", "ladki", "shagun", "ashirwad", "marriage", "wedding", "vivah", "shadi", "ਧੀ", "ਕੰਨਿਆ", "ਵਿਆਹ", "ਸ਼ਗਨ", "बेटी", "कन्या", "विवाह", "शादी", "शगुन", "pmmvy"],
+                "boost_ids": ["sukanya-samriddhi", "punjab-ashirwad", "pmmvy", "janani-suraksha-yojana"],
+                "boost_categories": ["women_and_children"]
+            },
+            "farmer": {
+                "keywords": ["kisan", "farmer", "kheti", "fasal", "krishi", "pm-kisan", "pmfby", "crop", "bima", "land", "jamabandi", "fertilizer", "tractor", "ਮਿੱਟੀ", "ਕਿਸਾਨ", "ਖੇਤੀ", "ਫਸਲ", "किसान", "खेती", "फसल", "कृषि"],
+                "boost_ids": ["pm-kisan", "pmfby", "pm-kusum", "soil-health-card"],
+                "boost_categories": ["agriculture", "farmers", "rural_development"]
+            },
+            "health": {
+                "keywords": ["ayushman", "pm-jay", "health", "hospital", "ilaj", "bima", "swasthya", "doctor", "treatment", "dawa", "sehat", "sarbat", "ਸਿਹਤ", "ਇਲਾਜ", "ਹਸਪਤਾਲ", "स्वास्थ्य", "इलाज", "अस्पताल"],
+                "boost_ids": ["pm-jay", "punjab-bhai-ghanhya", "janani-suraksha-yojana"],
+                "boost_categories": ["health", "healthcare", "insurance"]
+            },
+            "scholarship": {
+                "keywords": ["scholarship", "vazifa", "chhatravritti", "padhai", "college", "school", "student", "btech", "matric", "post-matric", "fee", "study", "ਵਜ਼ੀਫ਼ਾ", "ਪੜ੍ਹਾਈ", "ਵਿਦਿਆਰਥੀ", "छात्रवृत्ति", "पढ़ाई", "विद्यार्थी"],
+                "boost_ids": ["nsp-csss", "punjab-post-matric-sc", "dr-ambedkar-post-matric-scholarship-ews", "nmmss"],
+                "boost_categories": ["education", "scholarships"]
+            },
+            "pension": {
+                "keywords": ["pension", "vriddha", "old age", "senior", "elderly", "buzurg", "vridh", "atal", "apy", "ignoaps", "ਪੈਨਸ਼ਨ", "ਬਜ਼ੁਰਗ", "पेंशन", "वृद्ध", "बुजुर्ग"],
+                "boost_ids": ["nsap-ignoaps", "atal-pension-yojana", "punjab-old-age-pension", "pm-sym"],
+                "boost_categories": ["social_security", "pension"]
+            },
+            "ration": {
+                "keywords": ["ration", "rashan", "anaj", "food", "atta dal", "nfsa", "bpl", "card", "ਰਾਸ਼ਨ", "ਅੰਨ", "राशन", "अनाज"],
+                "boost_ids": ["punjab-smart-ration-card", "punjab-atta-dal"],
+                "boost_categories": ["social_security", "food_security"]
+            }
+        }
 
-        matched_schemes = []
+        # Check user profile state if available
+        user_state = (user_profile or {}).get("state", "").lower()
+        is_punjab_context = any(k in low for k in ["punjab", "pb", "ludhiana", "amritsar", "jalandhar", "patiala", "mohali", "bathinda", "ਪੰਜਾਬ", "पंजाब"]) or "punjab" in user_state
 
-        if is_scholarship:
-            q = query.filter(DBScheme.category.in_(["education", "scholarships"]))
-            if is_punjab:
-                matched_schemes = q.filter(or_(DBScheme.applicable_states.like("%Punjab%"), DBScheme.level == "central")).all()
-            else:
-                matched_schemes = q.all()
-        elif is_farmer:
-            matched_schemes = query.filter(DBScheme.category.in_(["agriculture", "farmers", "rural_development"])).all()
-        elif is_health:
-            matched_schemes = query.filter(DBScheme.category.in_(["health", "healthcare", "insurance"])).all()
-        elif is_business:
-            matched_schemes = query.filter(DBScheme.category.in_(["employment", "business", "financial_support"])).all()
-        elif is_women:
-            matched_schemes = query.filter(DBScheme.category.in_(["women_and_children", "social_security"])).all()
-        elif is_pension:
-            matched_schemes = query.filter(DBScheme.category.in_(["social_security", "pension"])).all()
-        else:
-            # Full text keyword match
-            clauses = []
-            for kw in keywords[:5]:
-                clauses.append(DBScheme.name.ilike(f"%{kw}%"))
-                clauses.append(DBScheme.short_description.ilike(f"%{kw}%"))
-                clauses.append(DBScheme.category.ilike(f"%{kw}%"))
-            if clauses:
-                matched_schemes = query.filter(or_(*clauses)).limit(5).all()
+        scores = {}
+        for s in schemes:
+            score = 0
+            s_parts = [
+                s.id,
+                s.name,
+                s.name_hi or "",
+                s.name_pa or "",
+                s.category or "",
+                s.target_beneficiaries_json or "",
+                s.benefits_summary or "",
+                s.short_description or ""
+            ]
+            s_text = " ".join(s_parts).lower()
 
-        if not matched_schemes:
-            # Fallback to general popular schemes
-            matched_schemes = query.limit(4).all()
+            # Intent boost
+            for intent_name, intent_data in INTENT_MAP.items():
+                if any(w in low for w in intent_data["keywords"]):
+                    if s.id in intent_data["boost_ids"]:
+                        score += 90
+                    elif s.category in intent_data["boost_categories"]:
+                        score += 50
+                    elif any(w in s_text for w in intent_data["keywords"][:4]):
+                        score += 25
 
-        return matched_schemes[:4]
+            # Direct token matching (including Indic Unicode tokens)
+            tokens = re.findall(r'[\w\u0900-\u097F\u0A00-\u0A7F]+', low)
+            stop_words = {
+                "hai", "kya", "liye", "sarkar", "paisa", "kaise", "milega", "chahiye", "batao",
+                "the", "and", "for", "aurat", "kitni", "kab", "karo", "kisi", "meri", "mera", "mere"
+            }
+            for t in tokens:
+                if len(t) >= 3 and t not in stop_words:
+                    if t in s.id:
+                        score += 50
+                    if t in s.name.lower():
+                        score += 35
+                    if t in s_text:
+                        score += 15
+
+            # Punjab preference when relevant
+            if is_punjab_context and (s.level == "state" or "punjab" in (s.applicable_states or "").lower()):
+                score += 10
+
+            if score > 0:
+                scores[s] = score
+
+        if scores:
+            sorted_schemes = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)
+            return sorted_schemes[:4]
+
+        # General high-impact fallback
+        fallback_flagships = ["pm-kisan", "pm-jay", "pmay-g", "nsp-csss"]
+        fallback = [s for s in schemes if s.id in fallback_flagships]
+        return (fallback or schemes)[:4]
 
     def _generate_grounded_fallback(
         self,
@@ -161,12 +243,37 @@ class AssistantService:
             portal = s.official_portal_url or "https://india.gov.in"
             helpline = s.helpline_number or "National Helpline: 1800-11-0001"
             
+            # Format required docs
+            req_docs = [sd.document.name for sd in s.documents if sd.document]
+            docs_str = ", ".join(req_docs) if req_docs else "Aadhaar Card, Bank Account Details, Identity Proof"
+
             if lang == "pa":
-                txt = f"### {name}\n- **ਵਿਸਥਾਰ:** {desc}\n- **ਲਾਭ:** {s.benefits_summary}\n- **ਅਧਿਕਾਰਤ ਪੋਰਟਲ:** [{portal}]({portal})\n- **ਹੈਲਪਲਾਈਨ:** {helpline}"
+                txt = (
+                    f"### {name}\n"
+                    f"- **ਵਿਸਥਾਰ:** {desc}\n"
+                    f"- **ਮੁੱਖ ਲਾਭ:** {s.benefits_summary}\n"
+                    f"- **ਲੋੜੀਂਦੇ ਦਸਤਾਵੇਜ਼:** {docs_str}\n"
+                    f"- **ਅਧਿਕਾਰਤ ਪੋਰਟਲ:** [{portal}]({portal})\n"
+                    f"- **ਹੈਲਪਲਾਈਨ:** {helpline}"
+                )
             elif lang == "hi":
-                txt = f"### {name}\n- **विवरण:** {desc}\n- **लाभ:** {s.benefits_summary}\n- **आधिकारिक पोर्टल:** [{portal}]({portal})\n- **हेल्पलाइन:** {helpline}"
+                txt = (
+                    f"### {name}\n"
+                    f"- **विवरण:** {desc}\n"
+                    f"- **मुख्य लाभ:** {s.benefits_summary}\n"
+                    f"- **आवश्यक दस्तावेज:** {docs_str}\n"
+                    f"- **आधिकारिक पोर्टल:** [{portal}]({portal})\n"
+                    f"- **हेल्पलाइन:** {helpline}"
+                )
             else:
-                txt = f"### {name}\n- **Summary:** {desc}\n- **Key Benefits:** {s.benefits_summary}\n- **Official Portal:** [{portal}]({portal})\n- **Helpline:** {helpline}"
+                txt = (
+                    f"### {name}\n"
+                    f"- **Summary:** {desc}\n"
+                    f"- **Key Benefits:** {s.benefits_summary}\n"
+                    f"- **Required Documents:** {docs_str}\n"
+                    f"- **Official Portal:** [{portal}]({portal})\n"
+                    f"- **Helpline:** {helpline}"
+                )
             scheme_texts.append(txt)
 
         return f"{greeting}\n\n{intro}\n\n" + "\n\n".join(scheme_texts) + closing
@@ -207,6 +314,7 @@ class AssistantService:
                         "summary": s.short_description,
                         "benefits": s.benefits_summary,
                         "eligibility": s.eligibility_summary,
+                        "required_documents": [sd.document.name for sd in s.documents if sd.document] if hasattr(s, "documents") else [],
                         "official_portal": s.official_portal_url,
                         "helpline": s.helpline_number
                     }
@@ -217,7 +325,10 @@ class AssistantService:
                 if detected_lang == "pa":
                     lang_instruction = "Respond entirely in respectful, fluent Punjabi (ਪੰਜਾਬੀ). Clearly state official Punjabi scheme names."
                 elif detected_lang == "hi":
-                    lang_instruction = "Respond entirely in respectful, fluent Hindi (हिंदी)."
+                    lang_instruction = (
+                        "Respond in natural, respectful, and accessible Hindi (हिंदी). "
+                        "If the user queried in Romanized Hindi (Hinglish), you may use clear Hindi with English technical terms in parentheses where helpful."
+                    )
 
                 prompt = (
                     f"{SYSTEM_PROMPT}\n\n"
@@ -225,7 +336,9 @@ class AssistantService:
                     f"USER PROFILE: {json.dumps(user_profile or {}, ensure_ascii=False)}\n\n"
                     f"VERIFIED SCHEMES RETRIEVED FROM DATABASE:\n{json.dumps(schemes_context, indent=2, ensure_ascii=False)}\n\n"
                     f"USER QUERY: {message}\n\n"
-                    f"Answer the user query thoroughly based ONLY on the verified schemes above. Include official portal URLs and mention required documents."
+                    f"Answer the user query thoroughly and directly based on the verified schemes above. "
+                    f"Clearly state the scheme name, key benefits, eligibility requirements, required documents, and official portal URL. "
+                    f"Never give generic advice when relevant verified schemes are provided."
                 )
 
                 # Modern google-genai call

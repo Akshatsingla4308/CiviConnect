@@ -73,9 +73,11 @@ export const DocumentCard = ({ document, onOpenChecklist }) => {
         )}
 
         <button
+          type="button"
           onClick={() => onOpenChecklist && onOpenChecklist(document)}
           className="btn btn-outline btn-sm"
-          style={{ fontSize: '0.75rem' }}
+          style={{ fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+          aria-label={`View guidelines for ${getLocalizedName()}`}
         >
           <CheckSquare size={13} />
           <span>View Guidelines</span>
