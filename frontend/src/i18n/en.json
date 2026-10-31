@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "explore": "Explore Schemes",
+    "assistant": "AI Navigator",
+    "wizard": "Eligibility Wizard",
+    "documents": "Document Centre",
+    "directory": "States Directory",
+    "dashboard": "My Workspace",
+    "admin": "Admin Console",
+    "login": "Sign In",
+    "register": "Sign Up",
+    "logout": "Sign Out"
+  },
+  "hero": {
+    "badge": "Independent Public Service Information Service",
+    "title": "Navigate Government Schemes with Clarity and Grounded Truth",
+    "subtitle": "Discover central and state public welfare programs, verify your eligibility with deterministic rules, and build step-by-step document checklists — without government terminology confusion.",
+    "ctaExplore": "Explore Verified Schemes",
+    "ctaWizard": "Check My Eligibility",
+    "ctaAssistant": "Ask AI Assistant",
+    "disclaimer": "CiviConnect is an independent information service and does not submit applications or promise government benefits."
+  },
+  "schemes": {
+    "title": "Government Scheme Directory",
+    "subtitle": "Explore verified central and state welfare initiatives categorized by target group, sector, and jurisdiction.",
+    "searchPlaceholder": "Search by scheme name, benefits, keywords (e.g., scholarship, farmer, pension)...",
+    "filterCategory": "Category",
+    "filterState": "State / Jurisdiction",
+    "filterLevel": "Government Level",
+    "allCategories": "All Categories",
+    "allStates": "All States / UTs",
+    "allLevels": "All Levels",
+    "central": "Central Government",
+    "state": "State Government",
+    "verified": "Verified Official Record",
+    "partiallyVerified": "Pending Review",
+    "viewDetails": "View Details & Rules",
+    "checkEligibility": "Check Eligibility",
+    "officialPortal": "Official Portal",
+    "noResults": "No matching government schemes found for your search criteria."
+  },
+  "wizard": {
+    "title": "Deterministic Eligibility Wizard",
+    "subtitle": "Answer demographic questions to evaluate your eligibility across all 52 verified schemes with zero AI hallucinations.",
+    "step1": "State & Residence",
+    "step2": "Demographics & Category",
+    "step3": "Education & Occupation",
+    "step4": "Income & Property",
+    "next": "Next Step",
+    "back": "Back",
+    "evaluate": "Calculate Eligibility",
+    "resultsTitle": "Eligibility Evaluation Results",
+    "likelyEligible": "Likely Eligible",
+    "possiblyEligible": "Possibly Eligible",
+    "insufficientInfo": "Insufficient Information",
+    "notEligible": "Not Eligible Based on Known Rules"
+  },
+  "assistant": {
+    "title": "Grounded AI Public Service Assistant",
+    "subtitle": "Ask questions in English, Hindi, or Punjabi. Every answer is strictly grounded in verified government records.",
+    "inputPlaceholder": "Ask a question (e.g. 'Scholarships in Punjab for BTech students', 'PM-KISAN eligibility criteria')...",
+    "send": "Send Query",
+    "statusLive": "Live Gemini 3.8 Flash Active",
+    "statusFallback": "Database-Grounded Navigator (API Key Pending)",
+    "disclaimer": "Grounded AI responses are for navigation only. Please check official gazettes before applying."
+  },
+  "documents": {
+    "title": "Canonical Document Directory",
+    "subtitle": "Essential Indian public service identity, domicile, education, and welfare certificates with official issuing authorities.",
+    "searchPlaceholder": "Search documents (e.g. Income Certificate, Aadhaar, Jamabandi)...",
+    "issuingAuthority": "Issuing Authority",
+    "guidance": "General Guidance",
+    "associatedSchemes": "Required for Schemes",
+    "createChecklist": "Track in Checklist"
+  },
+  "dashboard": {
+    "title": "Citizen Workspace",
+    "subtitle": "Manage your saved welfare schemes, track personalized document checklists, and review past eligibility assessments.",
+    "savedSchemes": "Saved Schemes",
+    "checklists": "Document Checklists",
+    "assessments": "Assessment History",
+    "applications": "Application Tracker",
+    "emptySaved": "You have not saved any schemes yet. Browse the scheme directory to bookmark programs of interest.",
+    "emptyChecklists": "No active document checklists. Start a checklist from any scheme page.",
+    "profileSettings": "Profile Details"
+  },
+  "footer": {
+    "about": "About CiviConnect",
+    "help": "Help & FAQs",
+    "privacy": "Privacy Policy",
+    "sourceVerification": "Data Verification Standards",
+    "tagline": "An independent, transparent digital public service navigation initiative.",
+    "disclaimer": "CiviConnect does not impersonate government entities, charge citizens for information, or process application submissions."
+  }
+}

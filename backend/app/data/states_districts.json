@@ -1,0 +1,113 @@
+[
+  {
+    "code": "PB",
+    "name": "Punjab",
+    "name_hi": "पंजाब",
+    "name_pa": "ਪੰਜਾਬ",
+    "is_ut": false,
+    "districts": [
+      "Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib",
+      "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar",
+      "Kapurthala", "Ludhiana", "Mansa", "Moga", "Sri Muktsar Sahib",
+      "Pathankot", "Patiala", "Rupnagar", "SAS Nagar (Mohali)",
+      "Shahid Bhagat Singh Nagar (Nawanshahr)", "Sangrur", "Tarn Taran", "Malerkotla"
+    ]
+  },
+  {
+    "code": "CH",
+    "name": "Chandigarh",
+    "name_hi": "चंडीगढ़",
+    "name_pa": "ਚੰਡੀਗੜ੍ਹ",
+    "is_ut": true,
+    "districts": ["Chandigarh"]
+  },
+  {
+    "code": "DL",
+    "name": "Delhi",
+    "name_hi": "दिल्ली",
+    "name_pa": "ਦਿੱਲੀ",
+    "is_ut": true,
+    "districts": [
+      "Central Delhi", "East Delhi", "New Delhi", "North Delhi",
+      "North East Delhi", "North West Delhi", "Shahdara", "South Delhi",
+      "South East Delhi", "South West Delhi", "West Delhi"
+    ]
+  },
+  {
+    "code": "HR",
+    "name": "Haryana",
+    "name_hi": "हरियाणा",
+    "name_pa": "ਹਰਿਆਣਾ",
+    "is_ut": false,
+    "districts": [
+      "Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad",
+      "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal",
+      "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula",
+      "Panipat", "Rewari", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"
+    ]
+  },
+  {
+    "code": "HP",
+    "name": "Himachal Pradesh",
+    "name_hi": "हिमाचल प्रदेश",
+    "name_pa": "ਹਿਮਾਚਲ ਪ੍ਰਦੇਸ਼",
+    "is_ut": false,
+    "districts": [
+      "Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur",
+      "Kullu", "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur",
+      "Solan", "Una"
+    ]
+  },
+  {
+    "code": "UP",
+    "name": "Uttar Pradesh",
+    "name_hi": "उत्तर प्रदेश",
+    "name_pa": "ਉੱਤਰ ਪ੍ਰਦੇਸ਼",
+    "is_ut": false,
+    "districts": [
+      "Agra", "Aligarh", "Ayodhya", "Bareilly", "Ghaziabad",
+      "Gorakhpur", "Kanpur Nagar", "Lucknow", "Meerut", "Noida (Gautam Buddha Nagar)",
+      "Prayagraj", "Varanasi", "Mathura", "Jhansi", "Moradabad"
+    ]
+  },
+  {
+    "code": "RJ",
+    "name": "Rajasthan",
+    "name_hi": "राजस्थान",
+    "name_pa": "ਰਾਜਸਥਾਨ",
+    "is_ut": false,
+    "districts": [
+      "Ajmer", "Alwar", "Bikaner", "Jaipur", "Jodhpur", "Kota", "Udaipur", "Bharatpur", "Sikar"
+    ]
+  },
+  {
+    "code": "MH",
+    "name": "Maharashtra",
+    "name_hi": "महाराष्ट्र",
+    "name_pa": "ਮਹਾਰਾਸ਼ਟਰ",
+    "is_ut": false,
+    "districts": [
+      "Mumbai City", "Mumbai Suburban", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad"
+    ]
+  },
+  {
+    "code": "KA",
+    "name": "Karnataka",
+    "name_hi": "कर्नाटक",
+    "name_pa": "ਕਰਨਾਟਕ",
+    "is_ut": false,
+    "districts": [
+      "Bengaluru Urban", "Bengaluru Rural", "Mysuru", "Mangaluru", "Hubballi-Dharwad", "Belagavi"
+    ]
+  },
+  {
+    "code": "WB",
+    "name": "West Bengal",
+    "name_hi": "पश्चिम बंगाल",
+    "name_pa": "ਪੱਛਮੀ ਬੰਗਾਲ",
+    "is_ut": false,
+    "districts": [
+      "Kolkata", "North 24 Parganas", "South 24 Parganas", "Howrah", "Darjeeling", "Siliguri"
+    ]
+  }
+]
