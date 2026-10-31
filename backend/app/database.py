@@ -8,8 +8,39 @@ logger = logging.getLogger("civiconnect.database")
 
 Base = declarative_base()
 
+
+def normalize_database_url(url: str) -> str:
+    """
+    Ensure compatibility with SQLAlchemy 2.0 and cloud providers (Render, Heroku, Supabase, Neon).
+    - Rewrites legacy 'postgres://' scheme to 'postgresql+psycopg://' (Psycopg 3)
+    - Normalizes bare 'postgresql://' to 'postgresql+psycopg://' (Psycopg 3)
+    - Preserves explicit drivers like 'postgresql+psycopg2://' and 'sqlite://'
+    """
+    if not url:
+        return url
+    if url.startswith("postgres://"):
+        return url.replace("postgres://", "postgresql+psycopg://", 1)
+    if url.startswith("postgresql://"):
+        return url.replace("postgresql://", "postgresql+psycopg://", 1)
+    return url
+
+
+def mask_database_url(url: str) -> str:
+    """Mask credentials in database URL to prevent credential leakage in logs and status endpoints."""
+    if not url:
+        return url
+    try:
+        if "@" in url:
+            prefix, rest = url.split("://", 1)
+            auth, host_path = rest.split("@", 1)
+            return f"{prefix}://***:***@{host_path}"
+    except Exception:
+        pass
+    return url
+
+
 db_status: Dict[str, Any] = {
-    "target_url": settings.DATABASE_URL,
+    "target_url": mask_database_url(settings.DATABASE_URL),
     "active_dialect": "unknown",
     "is_connected": False,
     "fallback_active": False,
@@ -24,12 +55,12 @@ SessionLocal = None
 def setup_database_engine():
     global engine, SessionLocal, db_status
 
-    target_url = settings.DATABASE_URL
+    target_url = normalize_database_url(settings.DATABASE_URL)
     is_postgres = "postgres" in target_url.lower()
 
     if is_postgres:
         try:
-            logger.info(f"Attempting connection to PostgreSQL at {target_url.split('@')[-1] if '@' in target_url else target_url}")
+            logger.info(f"Attempting connection to PostgreSQL at {mask_database_url(target_url)}")
             pg_engine = create_engine(
                 target_url,
                 pool_pre_ping=True,
@@ -43,6 +74,7 @@ def setup_database_engine():
             engine = pg_engine
             SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
             db_status.update({
+                "target_url": mask_database_url(target_url),
                 "active_dialect": "postgresql",
                 "is_connected": True,
                 "fallback_active": False,
@@ -130,4 +162,7 @@ def init_db():
 
 def get_database_status() -> Dict[str, Any]:
     global db_status
-    return db_status.copy()
+    stat = db_status.copy()
+    if "target_url" in stat and stat["target_url"]:
+        stat["target_url"] = mask_database_url(stat["target_url"])
+    return stat

@@ -77,8 +77,10 @@ Copy-Item .env.example .env
 
 **Expected Test Result:**
 ```text
-======================== 22 passed, 1 warning in ~12s ========================
+======================== 24 passed, 1 warning in ~12s ========================
 ```
+
+---
 
 ### Step 2: Automated End-to-End Browser Testing
 
@@ -95,11 +97,10 @@ RESULTS: 20 passed, 0 failed
 ALL TESTS PASSED SUCCESSFULLY!
 ==================================================
 ```
-```
 
 ---
 
-### Step 2: Start the Backend API Server
+### Step 3: Start the Backend API Server
 
 ```powershell
 .\start_backend.ps1
@@ -111,7 +112,7 @@ The FastAPI application starts at `http://127.0.0.1:8000`:
 
 ---
 
-### Step 3: Start the Frontend Application
+### Step 4: Start the Frontend Application
 
 Open a second PowerShell terminal in the repository root:
 
@@ -135,11 +136,12 @@ The output will be generated cleanly in `frontend/dist/`.
 
 ---
 
-## 5. PostgreSQL Database Configuration
+## 5. PostgreSQL Database Configuration & Production Deployment
 
-PostgreSQL is the intended primary database.
+PostgreSQL is the production primary database. Both modern **Psycopg 3** (`psycopg[binary]`) and **Psycopg 2** (`psycopg2-binary`) drivers are installed and supported:
 
-1. Ensure the PostgreSQL service is active:
+1. **Local Setup:**
+   Ensure the PostgreSQL service is active:
    ```powershell
    Get-Service -Name *postgres*
    ```
@@ -149,11 +151,16 @@ PostgreSQL is the intended primary database.
    ```
 3. Update `DATABASE_URL` in your `.env` file:
    ```ini
-   DATABASE_URL=postgresql+psycopg2://postgres:YOUR_PASSWORD@localhost:5432/civiconnect_db
+   DATABASE_URL=postgresql+psycopg://postgres:YOUR_PASSWORD@localhost:5432/civiconnect_db
    ```
-4. Restart the backend. The backend will automatically run migrations and idempotent seeds on startup.
+   *(Note: `postgresql+psycopg2://` is also supported for backward compatibility).*
+4. **Render / Cloud Production Deployment:**
+   - Render injects `DATABASE_URL` starting with `postgres://` or `postgresql://`.
+   - CiviConnect automatically normalizes the URL scheme to `postgresql+psycopg://` at runtime to bind to the official Psycopg 3 binary driver.
+   - Credentials in logs and health endpoints are masked automatically (`***:***@host`).
+   - SQLite fallback is disabled in production (`ALLOW_SQLITE_FALLBACK=false`), ensuring fail-safe PostgreSQL enforcement.
 
-*Note on Local Development Fallback:* If `DATABASE_URL` is unreachable or PostgreSQL credentials fail, CiviConnect automatically uses the local SQLite database (`sqlite:///./civiconnect.db`) and transparently reports the fallback on `/api/system/health` and the Admin Console.
+*Note on Local Development Fallback:* If `DATABASE_URL` is unreachable and `ALLOW_SQLITE_FALLBACK=true` is explicitly set in `.env`, CiviConnect uses local SQLite (`sqlite:///./civiconnect.db`) and reports the status on `/api/system/health` and the Admin Console.
 
 ---
 
