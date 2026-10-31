@@ -1,16 +1,22 @@
 import logging
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
 from app.database import init_db
+from app.limiter import limiter
 from app.services.seed_service import SeedService
 from app.api.auth_router import router as auth_router
 from app.api.schemes_router import router as schemes_router
 from app.api.eligibility_router import router as eligibility_router
 from app.api.documents_router import router as documents_router
 from app.api.checklists_router import router as checklists_router
+from app.api.vault_router import router as vault_router
+from app.api.applications_router import router as applications_router
 from app.api.user_router import router as user_router
 from app.api.assistant_router import router as assistant_router
 from app.api.admin_router import router as admin_router
@@ -43,12 +49,25 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS Middleware
+# Attach Rate Limiter
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# CORS Configuration (Strict origins with credentials, supporting local dev and Vercel production)
+allowed_origins = list(settings.FRONTEND_ORIGINS)
+env_origins = os.getenv("ALLOWED_ORIGINS", "")
+if env_origins:
+    for o in env_origins.split(","):
+        cleaned = o.strip()
+        if cleaned and cleaned not in allowed_origins:
+            allowed_origins.append(cleaned)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all during development for ease of use
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"^https:\/\/.*\.vercel\.app$",
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
 )
 
@@ -59,6 +78,8 @@ app.include_router(schemes_router)
 app.include_router(eligibility_router)
 app.include_router(documents_router)
 app.include_router(checklists_router)
+app.include_router(vault_router)
+app.include_router(applications_router)
 app.include_router(user_router)
 app.include_router(assistant_router)
 app.include_router(admin_router)

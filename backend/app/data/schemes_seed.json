@@ -730,16 +730,17 @@
     "eligibility_rules": [
       {
         "field": "occupation",
-        "operator": "in",
-        "value": [
-          "street_vendor",
-          "vendor",
-          "hawker",
-          "thelewala",
-          "rehriwala"
-        ],
-        "description": "Applicant must be an active street vendor or hawker.",
-        "source_id": "pm-svanidhi-guidelines-sec3"
+        "operator": "eq",
+        "value": "street_vendor",
+        "description": "Applicant must be an urban street vendor, hawker, or mobile seller.",
+        "source_id": "pmsvanidhi-guidelines-mohua"
+      },
+      {
+        "field": "age",
+        "operator": "gte",
+        "value": 18,
+        "description": "Vendor must be at least 18 years of age.",
+        "source_id": "pmsvanidhi-guidelines-mohua"
       }
     ],
     "exclusions": [
@@ -813,8 +814,22 @@
         "field": "age",
         "operator": "gte",
         "value": 19,
-        "description": "Mother must be at least 19 years of age at pregnancy.",
-        "source_id": "pmmvy-guidelines-sec4"
+        "description": "Pregnant woman must be at least 19 years old at time of registration.",
+        "source_id": "pmmvy-guidelines-wcd"
+      },
+      {
+        "field": "gender",
+        "operator": "eq",
+        "value": "female",
+        "description": "Applicant must be a female citizen.",
+        "source_id": "pmmvy-guidelines-wcd"
+      },
+      {
+        "field": "is_taxpayer",
+        "operator": "eq",
+        "value": false,
+        "description": "Women in regular employment with Central/State Government or PSUs are excluded.",
+        "source_id": "pmmvy-guidelines-wcd"
       }
     ],
     "exclusions": [
@@ -888,6 +903,13 @@
         "operator": "lte",
         "value": 10,
         "description": "Girl child must be 10 years of age or younger at account opening.",
+        "source_id": "ssy-rules-2019"
+      },
+      {
+        "field": "citizenship",
+        "operator": "eq",
+        "value": "Indian",
+        "description": "Girl child and parent/guardian must be Indian citizens resident in India.",
         "source_id": "ssy-rules-2019"
       }
     ],
@@ -1288,8 +1310,15 @@
         "field": "age",
         "operator": "gte",
         "value": 15,
-        "description": "Applicant must be aged 15 years or above.",
-        "source_id": "pmkvy-guidelines"
+        "description": "Candidate must be at least 15 years of age.",
+        "source_id": "pmkvy-guidelines-msde"
+      },
+      {
+        "field": "citizenship",
+        "operator": "eq",
+        "value": "Indian",
+        "description": "Candidate must be an Indian citizen possessing Aadhaar.",
+        "source_id": "pmkvy-guidelines-msde"
       }
     ],
     "exclusions": [
@@ -1534,7 +1563,19 @@
         "operator": "gte",
         "value": 18,
         "description": "Borrower must be at least 18 years of age.",
-        "source_id": "standup-guidelines"
+        "source_id": "standup-guidelines-dfs"
+      },
+      {
+        "field": "social_category",
+        "operator": "in",
+        "value": [
+          "SC",
+          "ST",
+          "Female",
+          "Woman"
+        ],
+        "description": "Greenfield enterprise must be promoted by an SC, ST, or Woman entrepreneur holding at least 51% stake.",
+        "source_id": "standup-guidelines-dfs"
       }
     ],
     "exclusions": [
@@ -1606,9 +1647,16 @@
       {
         "field": "age",
         "operator": "gte",
-        "value": 14,
-        "description": "Applicant must be at least 14 years of age.",
-        "source_id": "ncs-portal-terms"
+        "value": 18,
+        "description": "Job seeker must be at least 18 years of age.",
+        "source_id": "ncs-portal-mole"
+      },
+      {
+        "field": "citizenship",
+        "operator": "eq",
+        "value": "Indian",
+        "description": "Candidate must be an Indian citizen with valid Aadhaar or government ID.",
+        "source_id": "ncs-portal-mole"
       }
     ],
     "exclusions": [
@@ -1761,8 +1809,15 @@
         "field": "age",
         "operator": "gte",
         "value": 18,
-        "description": "Minimum age is 18 years on the date of registration.",
-        "source_id": "pm-vishwakarma-guidelines-sec3"
+        "description": "Artisan must be at least 18 years of age.",
+        "source_id": "pmvishwakarma-guidelines-msme"
+      },
+      {
+        "field": "citizenship",
+        "operator": "eq",
+        "value": "Indian",
+        "description": "Must be an Indian artisan or craftsperson working with hands and tools in one of 18 trades.",
+        "source_id": "pmvishwakarma-guidelines-msme"
       }
     ],
     "exclusions": [
@@ -1835,8 +1890,15 @@
         "field": "is_bpl",
         "operator": "eq",
         "value": true,
-        "description": "Household must be registered Below Poverty Line (BPL) as per state criteria.",
-        "source_id": "nsap-nfbs-rules"
+        "description": "Family must be certified below poverty line (BPL).",
+        "source_id": "nsap-guidelines-mord"
+      },
+      {
+        "field": "age",
+        "operator": "lte",
+        "value": 59,
+        "description": "Deceased primary breadwinner must have been between 18 and 59 years of age at death.",
+        "source_id": "nsap-guidelines-mord"
       }
     ],
     "exclusions": [
@@ -2057,15 +2119,17 @@
     "eligibility_rules": [
       {
         "field": "occupation",
-        "operator": "in",
-        "value": [
-          "farmer",
-          "kisan",
-          "cultivator",
-          "agriculture"
-        ],
-        "description": "Applicant must be a farmer growing notified crops.",
-        "source_id": "pmfby-guidelines"
+        "operator": "eq",
+        "value": "farmer",
+        "description": "Applicant must be a farmer growing notified crops in notified areas.",
+        "source_id": "pmfby-guidelines-agricoop"
+      },
+      {
+        "field": "owns_cultivable_land",
+        "operator": "eq",
+        "value": true,
+        "description": "Applicant must possess cultivable land holding as owner or documented tenant.",
+        "source_id": "pmfby-guidelines-agricoop"
       }
     ],
     "exclusions": [
@@ -2227,7 +2291,14 @@
         "operator": "eq",
         "value": "Indian",
         "description": "Applicant must be an Indian citizen.",
-        "source_id": "pm-suryaghar-guidelines"
+        "source_id": "pmsuryaghar-guidelines-mnre"
+      },
+      {
+        "field": "is_taxpayer",
+        "operator": "neq",
+        "value": "excluded",
+        "description": "Must have an active domestic electricity connection with a discom and suitable residential roof space.",
+        "source_id": "pmsuryaghar-guidelines-mnre"
       }
     ],
     "exclusions": [
@@ -2300,8 +2371,22 @@
         "field": "gender",
         "operator": "eq",
         "value": "female",
-        "description": "Beneficiary must be a pregnant woman delivering in an institutional health center.",
-        "source_id": "jsy-guidelines"
+        "description": "Scheme is specifically for pregnant women seeking institutional delivery.",
+        "source_id": "jsy-guidelines-mohfw"
+      },
+      {
+        "field": "age",
+        "operator": "gte",
+        "value": 19,
+        "description": "Mother must be at least 19 years of age.",
+        "source_id": "jsy-guidelines-mohfw"
+      },
+      {
+        "field": "is_bpl",
+        "operator": "eq",
+        "value": true,
+        "description": "Must belong to BPL, SC, or ST household in high-performing states (all pregnant women in LPS states).",
+        "source_id": "jsy-guidelines-mohfw"
       }
     ],
     "exclusions": [
@@ -2374,7 +2459,14 @@
         "operator": "eq",
         "value": "Indian",
         "description": "Applicant must be an Indian citizen.",
-        "source_id": "pmmsy-guidelines"
+        "source_id": "pmmsy-guidelines-dof"
+      },
+      {
+        "field": "age",
+        "operator": "gte",
+        "value": 18,
+        "description": "Applicant must be at least 18 years old (individual fishers, fish farmers, or SHGs).",
+        "source_id": "pmmsy-guidelines-dof"
       }
     ],
     "exclusions": [
@@ -2445,15 +2537,20 @@
         "field": "education_level",
         "operator": "in",
         "value": [
-          "postgraduate",
-          "undergraduate",
-          "phd",
           "btech",
+          "mtech",
           "msc",
-          "mtech"
+          "postgraduate"
         ],
-        "description": "Completed B.Tech, M.Tech, or M.Sc with minimum CGPA of 8.0 or qualifying GATE score.",
-        "source_id": "pmrf-guidelines"
+        "description": "Must have completed or be in final year of B.Tech/M.Tech/M.Sc with high academic standing.",
+        "source_id": "pmrf-guidelines-moe"
+      },
+      {
+        "field": "citizenship",
+        "operator": "eq",
+        "value": "Indian",
+        "description": "Applicant must be an Indian citizen.",
+        "source_id": "pmrf-guidelines-moe"
       }
     ],
     "exclusions": [
@@ -2525,9 +2622,16 @@
       {
         "field": "annual_household_income",
         "operator": "lte",
-        "value": 600000,
-        "description": "EWS family income <= Rs. 3 Lakh; LIG family income <= Rs. 6 Lakh.",
-        "source_id": "pmay-u-guidelines"
+        "value": 1800000,
+        "description": "Household annual income must not exceed Rs. 18,00,000.",
+        "source_id": "pmayu-guidelines-mohua"
+      },
+      {
+        "field": "is_bpl",
+        "operator": "neq",
+        "value": "ineligible",
+        "description": "Beneficiary family must not own a pucca house in any part of India.",
+        "source_id": "pmayu-guidelines-mohua"
       }
     ],
     "exclusions": [
@@ -3088,7 +3192,14 @@
         "operator": "eq",
         "value": "Punjab",
         "description": "Applicant must be a permanent resident of Punjab.",
-        "source_id": "punjab-food-rules"
+        "source_id": "punjab-foodsupplies-rules"
+      },
+      {
+        "field": "annual_household_income",
+        "operator": "lte",
+        "value": 60000,
+        "description": "Annual family income must not exceed Rs. 60,000 for Priority Household (PHH) card.",
+        "source_id": "punjab-foodsupplies-rules"
       }
     ],
     "exclusions": [
@@ -3161,8 +3272,15 @@
         "field": "state",
         "operator": "eq",
         "value": "Punjab",
-        "description": "Applicant must reside in a notified slum in an urban area of Punjab.",
-        "source_id": "punjab-basera-guidelines"
+        "description": "Applicant must reside in Punjab.",
+        "source_id": "punjab-basera-rules"
+      },
+      {
+        "field": "is_bpl",
+        "operator": "eq",
+        "value": true,
+        "description": "Must be an eligible landless slum dweller occupying state/municipal land.",
+        "source_id": "punjab-basera-rules"
       }
     ],
     "exclusions": [
@@ -3227,7 +3345,14 @@
         "operator": "lte",
         "value": 350000,
         "description": "Parental annual income from all sources must not exceed Rs. 3,50,000.",
-        "source_id": "nmmss-guidelines-sec2"
+        "source_id": "nmmss-guidelines-education"
+      },
+      {
+        "field": "education_level",
+        "operator": "eq",
+        "value": "class_8",
+        "description": "Applicant must be enrolled in Class 8 in government, local body, or government-aided school.",
+        "source_id": "nmmss-guidelines-education"
       }
     ],
     "exclusions": [
@@ -3386,12 +3511,18 @@
         "value": [
           "primary",
           "upper_primary",
-          "elementary",
-          "school",
-          "student"
+          "class_1_to_8",
+          "school"
         ],
-        "description": "Student must be enrolled in Classes 1 to 8 in a recognized government/local body school.",
-        "source_id": "pm-poshan-guidelines"
+        "description": "Must be a student enrolled in Classes 1 to 8 in government or government-aided school.",
+        "source_id": "pmposhan-guidelines-moe"
+      },
+      {
+        "field": "age",
+        "operator": "lte",
+        "value": 14,
+        "description": "Child must be between 6 and 14 years of age.",
+        "source_id": "pmposhan-guidelines-moe"
       }
     ],
     "exclusions": [
@@ -3452,8 +3583,15 @@
         "field": "age",
         "operator": "gte",
         "value": 60,
-        "description": "Subscriber must be aged 60 years or above (55+ for retired defence personnel).",
-        "source_id": "scss-rules-2023"
+        "description": "Applicant must be at least 60 years old (or 55 for voluntary retirees).",
+        "source_id": "scss-rules-dea"
+      },
+      {
+        "field": "citizenship",
+        "operator": "eq",
+        "value": "Indian",
+        "description": "Applicant must be an individual Indian resident; NRIs and HUFs are excluded.",
+        "source_id": "scss-rules-dea"
       }
     ],
     "exclusions": [
@@ -3528,8 +3666,15 @@
         "field": "age",
         "operator": "gte",
         "value": 18,
-        "description": "Applicant must be at least 18 years of age.",
-        "source_id": "pmfme-guidelines"
+        "description": "Individual enterprise promoter must be at least 18 years of age.",
+        "source_id": "pmfme-guidelines-mofpi"
+      },
+      {
+        "field": "citizenship",
+        "operator": "eq",
+        "value": "Indian",
+        "description": "Applicant must be an Indian citizen running or proposing an unorganized micro food processing unit.",
+        "source_id": "pmfme-guidelines-mofpi"
       }
     ],
     "exclusions": [
@@ -3604,8 +3749,15 @@
         "field": "gender",
         "operator": "eq",
         "value": "female",
-        "description": "Beneficiary must be a rural woman member of an active SHG.",
-        "source_id": "day-nrlm-framework"
+        "description": "Primary beneficiary must be a woman from an eligible rural household.",
+        "source_id": "daynrlm-guidelines-mord"
+      },
+      {
+        "field": "is_bpl",
+        "operator": "eq",
+        "value": true,
+        "description": "Household must be identified as poor or vulnerable under SECC / participatory identification of the poor.",
+        "source_id": "daynrlm-guidelines-mord"
       }
     ],
     "exclusions": [
@@ -3840,15 +3992,17 @@
     "eligibility_rules": [
       {
         "field": "occupation",
-        "operator": "in",
-        "value": [
-          "farmer",
-          "kisan",
-          "cultivator",
-          "agriculture"
-        ],
-        "description": "Applicant must be an agricultural cultivator with cultivable land.",
-        "source_id": "pm-kusum-guidelines"
+        "operator": "eq",
+        "value": "farmer",
+        "description": "Applicant must be an individual farmer, group of farmers, FPO, or water user association.",
+        "source_id": "pmkusum-guidelines-mnre"
+      },
+      {
+        "field": "owns_cultivable_land",
+        "operator": "eq",
+        "value": true,
+        "description": "Must possess cultivable land suitable for solar water pump or solar power installation.",
+        "source_id": "pmkusum-guidelines-mnre"
       }
     ],
     "exclusions": [
@@ -3922,12 +4076,18 @@
         "operator": "in",
         "value": [
           "undergraduate",
-          "bsc",
-          "integrated_msc",
-          "science"
+          "bachelor",
+          "college"
         ],
-        "description": "Enrolled in B.Sc or Integrated M.Sc course in Natural/Basic Sciences.",
-        "source_id": "dst-inspire-guidelines"
+        "description": "Must be pursuing natural/basic sciences (B.Sc., B.S., Integrated M.Sc.) at recognized college/university.",
+        "source_id": "inspire-guidelines-dst"
+      },
+      {
+        "field": "age",
+        "operator": "lte",
+        "value": 22,
+        "description": "Applicant must be between 17 and 22 years of age.",
+        "source_id": "inspire-guidelines-dst"
       }
     ],
     "exclusions": [
@@ -4000,8 +4160,15 @@
         "field": "age",
         "operator": "gte",
         "value": 14,
-        "description": "Apprentice must be at least 14 years of age (18 for designated hazardous trades).",
-        "source_id": "naps-guidelines"
+        "description": "Candidate must be at least 14 years old (18 for designated hazardous trades).",
+        "source_id": "naps-guidelines-msde"
+      },
+      {
+        "field": "citizenship",
+        "operator": "eq",
+        "value": "Indian",
+        "description": "Candidate must be an Indian citizen with Aadhaar.",
+        "source_id": "naps-guidelines-msde"
       }
     ],
     "exclusions": [
@@ -4074,8 +4241,15 @@
         "field": "state",
         "operator": "eq",
         "value": "Punjab",
-        "description": "Applicant must reside in Punjab.",
-        "source_id": "bhai-ghanhya-rules"
+        "description": "Applicant must be a resident of Punjab.",
+        "source_id": "bgsss-rules-punjab"
+      },
+      {
+        "field": "citizenship",
+        "operator": "eq",
+        "value": "Indian",
+        "description": "Must be an active member of a registered cooperative society in Punjab.",
+        "source_id": "bgsss-rules-punjab"
       }
     ],
     "exclusions": [
@@ -4223,11 +4397,18 @@
     ],
     "eligibility_rules": [
       {
+        "field": "state",
+        "operator": "eq",
+        "value": "Punjab",
+        "description": "Beneficiary must be living or working in Punjab.",
+        "source_id": "sanjhirasoi-rules-punjab"
+      },
+      {
         "field": "citizenship",
         "operator": "eq",
         "value": "Indian",
-        "description": "Open to all vulnerable citizens and public without barrier.",
-        "source_id": "punjab-sanjhi-rasoi"
+        "description": "Open to all needy citizens, daily wage earners, and attendants at civil hospitals.",
+        "source_id": "sanjhirasoi-rules-punjab"
       }
     ],
     "exclusions": [
@@ -4261,5 +4442,91 @@
     ],
     "last_reviewed": "2026-10-31",
     "embedding_text": "Punjab Sanjhi Rasoi subsidized meal Rs 10 thali civil hospital daily wage worker food security Red Cross"
+  },
+  {
+    "id": "pmjdy",
+    "name": "Pradhan Mantri Jan Dhan Yojana (PMJDY)",
+    "name_local": {
+      "hi": "प्रधानमंत्री जन धन योजना (PMJDY)",
+      "pa": "ਪ੍ਰਧਾਨ ਮੰਤਰੀ ਜਨ ਧਨ ਯੋਜਨਾ (PMJDY)"
+    },
+    "category": [
+      "financial_inclusion",
+      "banking",
+      "financial_support"
+    ],
+    "target_groups": [
+      "Any unbanked citizen aged 10 years and above",
+      "Rural and urban low-income households",
+      "Citizens needing Direct Benefit Transfer (DBT) bank accounts"
+    ],
+    "summary": "National Mission for Financial Inclusion providing universal, zero-minimum-balance bank accounts, RuPay debit card, and accidental insurance cover.",
+    "benefits": [
+      "Zero minimum balance required (no maintenance charge).",
+      "Free RuPay Debit Card with built-in Rs. 2 Lakh accidental insurance cover.",
+      "Overdraft facility of up to Rs. 10,000 for eligible account holders (one per household).",
+      "Direct Benefit Transfer (DBT) enabled for all government welfare subsidies and scholarships."
+    ],
+    "eligibility_rules": [
+      {
+        "field": "age",
+        "operator": "gte",
+        "value": 10,
+        "description": "Applicant must be at least 10 years of age (minors 10+ can open operated accounts).",
+        "source_id": "pmjdy-guidelines-dfs"
+      },
+      {
+        "field": "citizenship",
+        "operator": "eq",
+        "value": "Indian",
+        "description": "Applicant must be an Indian citizen or permanent resident.",
+        "source_id": "pmjdy-guidelines-dfs"
+      }
+    ],
+    "exclusions": [
+      "Individuals already holding an active Basic Savings Bank Deposit Account (BSBDA) in the same bank branch."
+    ],
+    "documents_required": [
+      {
+        "name": "Aadhaar Card",
+        "category": "identity",
+        "required": true,
+        "notes": "Primary official valid document (OVD) for instant e-KYC. If address has changed, self-attestation is accepted."
+      },
+      {
+        "name": "Passport-sized Photograph",
+        "category": "photograph",
+        "required": true,
+        "notes": "Two recent passport-sized color photographs."
+      },
+      {
+        "name": "Voter ID Card",
+        "category": "identity",
+        "required": false,
+        "notes": "Alternative Official Valid Document (OVD) if Aadhaar is unavailable."
+      }
+    ],
+    "application_steps": [
+      "Visit any public or private sector commercial bank branch or authorized Bank Mitra / Common Service Centre (CSC).",
+      "Request a PMJDY account opening form (Form available free of charge in English and regional languages).",
+      "Fill personal details and attach self-attested Aadhaar photocopy and passport photograph.",
+      "Submit to bank officer or Bank Mitra kiosk for instant biometric or standard verification. Account is opened with zero deposit."
+    ],
+    "official_apply_url": "https://pmjdy.gov.in",
+    "official_info_url": "https://financialservices.gov.in",
+    "helpline": "1800-180-1111",
+    "jurisdiction": "Central",
+    "citizenship_requirement": "Indian citizen",
+    "sources": [
+      {
+        "title": "Department of Financial Services - PMJDY Official Portal",
+        "url": "https://pmjdy.gov.in",
+        "publisher": "Department of Financial Services, Ministry of Finance",
+        "last_verified": "2026-10-31",
+        "source_type": "official"
+      }
+    ],
+    "last_reviewed": "2026-10-31",
+    "embedding_text": "Pradhan Mantri Jan Dhan Yojana PMJDY bank account zero balance RuPay card open account banking financial inclusion financial services"
   }
 ]

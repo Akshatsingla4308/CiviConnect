@@ -49,3 +49,48 @@ def test_duplicate_registration_fails(client):
 def test_invalid_login_credentials(client):
     res = client.post("/api/auth/login", json={"email": "nobody@example.com", "password": "wrong"})
     assert res.status_code == 401
+
+
+def test_weak_password_registration_rejected(client):
+    # Too short (< 8 chars)
+    res_short = client.post("/api/auth/register", json={
+        "name": "Weak User",
+        "email": "weak1@example.com",
+        "password": "short"
+    })
+    assert res_short.status_code == 422
+
+    # Only digits
+    res_digits = client.post("/api/auth/register", json={
+        "name": "Weak User",
+        "email": "weak2@example.com",
+        "password": "12345678"
+    })
+    assert res_digits.status_code == 422
+
+    # Only letters
+    res_letters = client.post("/api/auth/register", json={
+        "name": "Weak User",
+        "email": "weak3@example.com",
+        "password": "abcdefgh"
+    })
+    assert res_letters.status_code == 422
+
+
+def test_invalid_bearer_token(client):
+    res = client.get("/api/auth/me", headers={"Authorization": "Bearer invalid.fake.token"})
+    assert res.status_code == 401
+    assert "Invalid authentication token" in res.json()["detail"]
+
+
+def test_cors_origin_allowed(client):
+    res = client.options(
+        "/api/schemes",
+        headers={
+            "Origin": "http://localhost:5173",
+            "Access-Control-Request-Method": "GET"
+        }
+    )
+    assert res.status_code in (200, 204)
+    assert res.headers.get("access-control-allow-origin") == "http://localhost:5173"
+

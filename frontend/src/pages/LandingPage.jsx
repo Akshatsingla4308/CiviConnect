@@ -265,7 +265,7 @@ export const LandingPage = () => {
                   Scheme Explorer
                 </h3>
                 <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-                  Search 52 verified Central and Punjab State schemes categorized by target group, sector, and jurisdiction.
+                  Search {totalSchemes} verified Central and state schemes categorized by target group, sector, and jurisdiction.
                 </p>
               </div>
               <Link to="/schemes" style={{ marginTop: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600, color: 'var(--color-terracotta)', fontSize: '0.875rem' }}>
@@ -293,7 +293,7 @@ export const LandingPage = () => {
                   Eligibility Wizard
                 </h3>
                 <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-                  Evaluate your age, category, income, and state with 93 mathematical rules to see exactly what you qualify for.
+                  Evaluate your age, category, income, and state with verified statutory rules to see exactly what you qualify for.
                 </p>
               </div>
               <Link to="/wizard" style={{ marginTop: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600, color: 'var(--color-terracotta)', fontSize: '0.875rem' }}>

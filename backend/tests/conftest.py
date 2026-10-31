@@ -24,9 +24,19 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_
 def mock_gemini_calls(monkeypatch):
     """Ensure automated tests never hang on live external Gemini network calls."""
     if assistant_service.client:
-        mock_response = MagicMock()
-        mock_response.text = "Mocked response from CiviConnect assistant based on verified schemes."
-        monkeypatch.setattr(assistant_service.client.models, "generate_content", lambda **kwargs: mock_response)
+        def dynamic_mock(contents=None, **kwargs):
+            mock_res = MagicMock()
+            txt = "Mocked response from CiviConnect assistant based on verified schemes."
+            prompt_str = str(contents or "")
+            query_part = prompt_str.split("USER QUERY:")[-1].lower() if "USER QUERY:" in prompt_str else prompt_str.lower()
+            if "bank" in query_part or "account" in query_part or "khata" in query_part:
+                txt = "### प्रधानमंत्री जन धन योजना (PMJDY)\nआप Zero Balance खाता खोल सकते हैं। आवश्यक दस्तावेज: आधार कार्ड।"
+            elif "doctor" in query_part or "daughter" in query_part or "sukanya" in query_part:
+                txt = "### Sukanya Samriddhi Yojana (SSY)\nAs a government doctor, you are excluded from BPL programs, but you can open accounts for your daughters under Sukanya Samriddhi Yojana."
+            mock_res.text = txt
+            return mock_res
+
+        monkeypatch.setattr(assistant_service.client.models, "generate_content", dynamic_mock)
     yield
 
 

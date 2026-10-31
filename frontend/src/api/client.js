@@ -197,6 +197,83 @@ export const api = {
       fetch(`${BASE_URL}/api/assistant/status`).then(handleResponse),
   },
 
+  // Document Vault
+  vault: {
+    list: () =>
+      fetch(`${BASE_URL}/api/vault`, {
+        headers: getAuthHeaders(),
+      }).then(handleResponse),
+
+    upload: (formData) => {
+      const token = localStorage.getItem('civiconnect_token');
+      const headers = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      return fetch(`${BASE_URL}/api/vault/upload`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      }).then(handleResponse);
+    },
+
+    downloadUrl: (docId) => `${BASE_URL}/api/vault/${docId}/download`,
+
+    downloadBlob: async (docId, fileName) => {
+      const token = localStorage.getItem('civiconnect_token');
+      const res = await fetch(`${BASE_URL}/api/vault/${docId}/download`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error('Failed to download document');
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName || 'document';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    },
+
+    delete: (docId) =>
+      fetch(`${BASE_URL}/api/vault/${docId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      }).then(handleResponse),
+  },
+
+  // Citizen Application Tracker
+  applications: {
+    list: () =>
+      fetch(`${BASE_URL}/api/applications`, {
+        headers: getAuthHeaders(),
+      }).then(handleResponse),
+
+    getById: (appId) =>
+      fetch(`${BASE_URL}/api/applications/${appId}`, {
+        headers: getAuthHeaders(),
+      }).then(handleResponse),
+
+    create: (data) =>
+      fetch(`${BASE_URL}/api/applications`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      }).then(handleResponse),
+
+    update: (appId, data) =>
+      fetch(`${BASE_URL}/api/applications/${appId}`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      }).then(handleResponse),
+
+    delete: (appId) =>
+      fetch(`${BASE_URL}/api/applications/${appId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      }).then(handleResponse),
+  },
+
   // Admin
   admin: {
     getStats: () =>

@@ -45,6 +45,7 @@ class DBUser(Base):
     saved_schemes = relationship("DBSavedScheme", back_populates="user", cascade="all, delete-orphan")
     assessments = relationship("DBUserAssessment", back_populates="user", cascade="all, delete-orphan")
     checklists = relationship("DBUserChecklist", back_populates="user", cascade="all, delete-orphan")
+    vault_documents = relationship("DBUserVaultDocument", back_populates="user", cascade="all, delete-orphan")
     applications = relationship("DBUserApplication", back_populates="user", cascade="all, delete-orphan")
     conversations = relationship("DBConversation", back_populates="user", cascade="all, delete-orphan")
 
@@ -243,6 +244,25 @@ class DBUserChecklist(Base):
     user = relationship("DBUser", back_populates="checklists")
 
 
+class DBUserVaultDocument(Base):
+    __tablename__ = "user_vault_documents"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid, index=True)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    document_name = Column(String(255), nullable=False)
+    document_type = Column(String(64), default="general", nullable=False)
+    file_name = Column(String(255), nullable=False)
+    file_size_bytes = Column(Integer, nullable=False)
+    mime_type = Column(String(64), nullable=False)
+    storage_path = Column(String(512), nullable=False)
+    sha256_checksum = Column(String(64), nullable=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=utcnow, nullable=False)
+    updated_at = Column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
+
+    user = relationship("DBUser", back_populates="vault_documents")
+
+
 class DBUserApplication(Base):
     __tablename__ = "user_applications"
 
@@ -251,11 +271,12 @@ class DBUserApplication(Base):
     scheme_id = Column(String(64), nullable=False)
     scheme_name = Column(String(255), nullable=False)
     application_number = Column(String(128), nullable=True)
-    status = Column(String(64), default="documents_pending", nullable=False)
+    status = Column(String(64), default="Draft", nullable=False)
     submission_date = Column(String(64), nullable=True)
     department = Column(String(255), nullable=True)
     portal_url = Column(String(512), nullable=True)
     notes = Column(Text, nullable=True)
+    history_json = Column(Text, default="[]", nullable=False)
     created_at = Column(DateTime, default=utcnow, nullable=False)
     updated_at = Column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
 

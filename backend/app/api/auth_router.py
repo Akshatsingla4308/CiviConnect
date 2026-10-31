@@ -1,8 +1,9 @@
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.limiter import limiter
 from app.models.db_models import DBUser, DBUserProfileRecord
 from app.models.schemas import UserRegisterRequest, UserLoginRequest, TokenResponse, UserProfileResponse
 from app.services.auth_service import AuthService, get_current_user
@@ -12,7 +13,8 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 
 @router.post("/register", response_model=TokenResponse)
-def register_user(req: UserRegisterRequest, db: Session = Depends(get_db)):
+@limiter.limit("20/hour")
+def register_user(request: Request, req: UserRegisterRequest, db: Session = Depends(get_db)):
     existing = db.query(DBUser).filter(DBUser.email == req.email.lower().strip()).first()
     if existing:
         raise HTTPException(
@@ -54,7 +56,8 @@ def register_user(req: UserRegisterRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenResponse)
-def login_user(req: UserLoginRequest, db: Session = Depends(get_db)):
+@limiter.limit("15/minute")
+def login_user(request: Request, req: UserLoginRequest, db: Session = Depends(get_db)):
     user = db.query(DBUser).filter(DBUser.email == req.email.lower().strip()).first()
     if not user or not AuthService.verify_password(req.password, user.password_hash):
         raise HTTPException(

@@ -44,10 +44,17 @@ class AuthService:
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
             return payload
-        except jwt.PyJWTError as e:
+        except jwt.ExpiredSignatureError:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"Invalid or expired authentication token: {str(e)}",
+                detail="Authentication token has expired. Please log in again.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        except jwt.PyJWTError as e:
+            logger.warning(f"JWT decode failure: {type(e).__name__}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication token.",
                 headers={"WWW-Authenticate": "Bearer"},
             )
 

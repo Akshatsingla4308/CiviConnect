@@ -6,6 +6,8 @@
     "documents": "Document Centre",
     "directory": "States Directory",
     "dashboard": "My Workspace",
+    "vault": "Document Vault",
+    "applications": "Application Tracker",
     "admin": "Admin Console",
     "login": "Sign In",
     "register": "Sign Up",

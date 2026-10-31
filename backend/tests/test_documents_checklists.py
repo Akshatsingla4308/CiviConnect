@@ -2,10 +2,18 @@ def test_list_canonical_documents(client):
     res = client.get("/api/documents")
     assert res.status_code == 200
     docs = res.json()["items"]
-    assert len(docs) >= 15
+    assert len(docs) >= 30
     doc_ids = [d["id"] for d in docs]
     assert "aadhaar_card" in doc_ids
     assert "income_certificate" in doc_ids
+    assert "voter_id_card" in doc_ids
+    # Verify pseudo-documents are eradicated
+    assert "active_mobile_number" not in doc_ids
+    assert "no_document_required" not in doc_ids
+    # Verify every canonical document has a verified issuing authority
+    for d in docs:
+        assert d.get("issuing_authority"), f"Document {d['id']} missing issuing_authority"
+        assert len(d.get("issuing_authority").strip()) > 3
 
 
 def test_user_checklist_flow(client):

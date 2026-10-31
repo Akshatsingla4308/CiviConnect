@@ -42,6 +42,26 @@ DOCUMENTS_CATALOG = [
         "official_portal_url": "https://incometax.gov.in"
     },
     {
+        "id": "voter_id_card",
+        "name": "Voter ID Card (EPIC)",
+        "name_hi": "मतदाता पहचान पत्र (वोटर आईडी)",
+        "name_pa": "ਵੋਟਰ ਸ਼ਨਾਖਤੀ ਕਾਰਡ",
+        "category": "identity",
+        "issuing_authority": "Election Commission of India (ECI)",
+        "general_guidance": "Official electoral photo identity card; serves as valid proof of identity, age, and residence.",
+        "official_portal_url": "https://voters.eci.gov.in"
+    },
+    {
+        "id": "passport_photograph",
+        "name": "Passport-sized Photograph",
+        "name_hi": "पासपोर्ट साइज फोटो",
+        "name_pa": "ਪਾਸਪੋਰਟ ਸਾਈਜ਼ ਫੋਟੋ",
+        "category": "identity",
+        "issuing_authority": "Self-Attested / Government Studio",
+        "general_guidance": "Recent colored photograph with white or light background, clearly showing frontal face view.",
+        "official_portal_url": "https://services.india.gov.in"
+    },
+    {
         "id": "income_certificate",
         "name": "Income Certificate",
         "name_hi": "आय प्रमाण पत्र",
@@ -170,15 +190,232 @@ DOCUMENTS_CATALOG = [
         "issuing_authority": "Registrar of Births & Deaths / Election Commission of India",
         "general_guidance": "Mandatory proof of chronological age for pensions, marriage grants, and senior citizen benefits.",
         "official_portal_url": "https://services.india.gov.in"
+    },
+    {
+        "id": "mgnrega_job_card",
+        "name": "MGNREGA Job Card",
+        "name_hi": "मनरेगा जॉब कार्ड",
+        "name_pa": "ਮਨਰੇਗਾ ਜੌਬ ਕਾਰਡ",
+        "category": "employment",
+        "issuing_authority": "Gram Panchayat / Department of Rural Development",
+        "general_guidance": "Entitlement card for rural employment guarantee; serves as valid official identity and BPL proof.",
+        "official_portal_url": "https://nrega.nic.in"
+    },
+    {
+        "id": "electricity_bill_latest",
+        "name": "Electricity Bill (Latest)",
+        "name_hi": "नवीनतम बिजली बिल",
+        "name_pa": "ਤਾਜ਼ਾ ਬਿਜਲੀ ਬਿੱਲ",
+        "category": "utility_and_property",
+        "issuing_authority": "State Electricity Distribution Company (DISCOM / PSPCL)",
+        "general_guidance": "Recent electricity consumption bill showing consumer account number and residential installation address.",
+        "official_portal_url": "https://pspcl.in"
+    },
+    {
+        "id": "death_certificate_of_breadwinner",
+        "name": "Death Certificate of Primary Breadwinner",
+        "name_hi": "मुख्य कमाऊ सदस्य का मृत्यु प्रमाण पत्र",
+        "name_pa": "ਮੁੱਖ ਕਮਾਉਣ ਵਾਲੇ ਦਾ ਮੌਤ ਦਾ ਸਰਟੀਫਿਕੇਟ",
+        "category": "legal_and_vital",
+        "issuing_authority": "Registrar of Births & Deaths / Municipal Corporation",
+        "general_guidance": "Official vital registration certificate certifying the demise of the primary family breadwinner.",
+        "official_portal_url": "https://crsorgi.gov.in"
+    },
+    {
+        "id": "husband_death_certificate",
+        "name": "Husband's Death Certificate",
+        "name_hi": "पति का मृत्यु प्रमाण पत्र",
+        "name_pa": "ਪਤੀ ਦਾ ਮੌਤ ਦਾ ਸਰਟੀਫਿਕੇਟ",
+        "category": "legal_and_vital",
+        "issuing_authority": "Registrar of Births & Deaths / Municipal Corporation / Tehsildar",
+        "general_guidance": "Required for widow pension and survivor assistance schemes.",
+        "official_portal_url": "https://crsorgi.gov.in"
+    },
+    {
+        "id": "ews_certificate",
+        "name": "Economically Weaker Section (EWS) Certificate",
+        "name_hi": "ईडब्ल्यूएस (आर्थिक रूप से कमजोर वर्ग) प्रमाण पत्र",
+        "name_pa": "ਈ.ਡਬਲਿਊ.ਐਸ. ਸਰਟੀਫਿਕੇਟ",
+        "category": "financial",
+        "issuing_authority": "Tehsildar / Sub-Divisional Magistrate (SDM)",
+        "general_guidance": "Certifies that annual family income is below Rs. 8 Lakh and meets asset ceiling criteria.",
+        "official_portal_url": "https://edistrict.punjab.gov.in"
+    },
+    {
+        "id": "sowing_certificate",
+        "name": "Crop Sowing Certificate / Girdawari",
+        "name_hi": "फसल बुवाई प्रमाण पत्र (गिरदावरी)",
+        "name_pa": "ਫ਼ਸਲ ਬਿਜਾਈ ਸਰਟੀਫਿਕੇਟ (ਗਿਰਦਾਵਰੀ)",
+        "category": "agriculture",
+        "issuing_authority": "Patwari / Revenue Officer / Department of Agriculture",
+        "general_guidance": "Proof of actual crop sown on the agricultural land parcel during the current season.",
+        "official_portal_url": "https://plrs.org.in"
+    },
+    {
+        "id": "detailed_project_report_dpr",
+        "name": "Detailed Project Report (DPR) / Business Plan",
+        "name_hi": "विस्तृत परियोजना रिपोर्ट (डीपीआर)",
+        "name_pa": "ਵਿਸਤ੍ਰਿਤ ਪ੍ਰੋਜੈਕਟ ਰਿਪੋਰਟ (DPR)",
+        "category": "business_and_enterprise",
+        "issuing_authority": "Chartered Accountant / Certified Project Consultant / MSME DI",
+        "general_guidance": "Comprehensive financial and operational project report outlining capital expenditure and working capital requirements.",
+        "official_portal_url": "https://www.kviconline.gov.in"
+    },
+    {
+        "id": "class_8_examination_marksheet",
+        "name": "Class 8 Examination Marksheet",
+        "name_hi": "8वीं कक्षा की अंकतालिका",
+        "name_pa": "8ਵੀਂ ਜਮਾਤ ਦੀ ਮਾਰਕਸ਼ੀਟ",
+        "category": "education",
+        "issuing_authority": "School Headmaster / District Education Officer (DEO)",
+        "general_guidance": "Certifies completion of Class 7/8 with qualifying marks for merit-cum-means scholarships.",
+        "official_portal_url": "https://scholarships.gov.in"
+    },
+    {
+        "id": "previous_class_marksheet",
+        "name": "Previous Class Examination Marksheet",
+        "name_hi": "पिछली कक्षा की अंकतालिका",
+        "name_pa": "ਪਿਛਲੀ ਜਮਾਤ ਦੀ ਮਾਰਕਸ਼ੀਟ",
+        "category": "education",
+        "issuing_authority": "School Principal / Headmaster",
+        "general_guidance": "Annual promotion marksheet from the recognized school verifying academic progress.",
+        "official_portal_url": "https://epunjabschool.gov.in"
+    },
+    {
+        "id": "school_enrollment_record",
+        "name": "School Enrollment / Bonafide Student Certificate",
+        "name_hi": "स्कूल नामांकन / बोनाफाइड छात्र प्रमाण पत्र",
+        "name_pa": "ਸਕੂਲ ਦਾਖਲਾ / ਬੋਨਾਫਾਈਡ ਸਰਟੀਫਿਕੇਟ",
+        "category": "education",
+        "issuing_authority": "School Principal / Headmaster",
+        "general_guidance": "Confirms active enrollment and attendance in a recognized government or aided school.",
+        "official_portal_url": "https://epunjabschool.gov.in"
+    },
+    {
+        "id": "previous_qualifying_exam_marksheet",
+        "name": "Previous Qualifying Examination Marksheet",
+        "name_hi": "पिछली योग्यता परीक्षा की अंकतालिका",
+        "name_pa": "ਪਿਛਲੀ ਯੋਗਤਾ ਪ੍ਰੀਖਿਆ ਦੀ ਮਾਰਕਸ਼ੀਟ",
+        "category": "education",
+        "issuing_authority": "Recognized School Board / University Examination Branch",
+        "general_guidance": "Official marksheet and grade card of the immediate qualifying examination.",
+        "official_portal_url": "https://scholarships.gov.in"
+    },
+    {
+        "id": "academic_transcripts_degree_certificate",
+        "name": "Academic Transcripts & Degree Certificate",
+        "name_hi": "अकादमिक ट्रांसक्रिप्ट एवं डिग्री प्रमाण पत्र",
+        "name_pa": "ਅਕਾਦਮਿਕ ਟ੍ਰਾਂਸਕ੍ਰਿਪਟ ਅਤੇ ਡਿਗਰੀ ਸਰਟੀਫਿਕੇਟ",
+        "category": "education",
+        "issuing_authority": "Controller of Examinations / Registrar of University",
+        "general_guidance": "Official degree parchment and semester transcripts certifying higher educational attainment.",
+        "official_portal_url": "https://education.gov.in"
+    },
+    {
+        "id": "detailed_research_proposal",
+        "name": "Detailed Research Proposal",
+        "name_hi": "विस्तृत शोध प्रस्ताव",
+        "name_pa": "ਖੋਜ ਤਜਵੀਜ਼ (Research Proposal)",
+        "category": "education",
+        "issuing_authority": "Applicant / Academic Supervisor / Institutional Research Board",
+        "general_guidance": "Comprehensive research outline for PhD or research fellowship admission.",
+        "official_portal_url": "https://pmrf.in"
+    },
+    {
+        "id": "nodal_institute_recommendation",
+        "name": "Nodal Institute Recommendation Letter",
+        "name_hi": "नोडल संस्थान अनुशंसा पत्र",
+        "name_pa": "ਨੋਡਲ ਸੰਸਥਾਨ ਸਿਫ਼ਾਰਸ਼ ਪੱਤਰ",
+        "category": "education",
+        "issuing_authority": "Director / Dean of Academics of Nodal IIT / IISc / IISER",
+        "general_guidance": "Formal institutional endorsement and nomination for national research fellowships.",
+        "official_portal_url": "https://pmrf.in"
+    },
+    {
+        "id": "unconditional_offer_letter_foreign_university",
+        "name": "Unconditional Offer Letter from Foreign University",
+        "name_hi": "विदेशी विश्वविद्यालय से गैर-शर्त प्रवेश पत्र",
+        "name_pa": "ਵਿਦੇਸ਼ੀ ਯੂਨੀਵਰਸਿਟੀ ਦਾ ਦਾਖਲਾ ਪੱਤਰ",
+        "category": "education",
+        "issuing_authority": "Authorized Registrar / Admissions Office of Host Foreign University",
+        "general_guidance": "Formal unconditional admission offer letter from a top-ranked international university.",
+        "official_portal_url": "https://nosmsje.gov.in"
+    },
+    {
+        "id": "class_12_board_advisory_marksheet",
+        "name": "Class 12 Board Advisory / Top 1% Marksheet",
+        "name_hi": "12वीं कक्षा शीर्ष 1% सलाहकार पत्र / अंकतालिका",
+        "name_pa": "12ਵੀਂ ਜਮਾਤ ਦਾ ਚੋਟੀ ਦਾ 1% ਸਰਟੀਫਿਕੇਟ",
+        "category": "education",
+        "issuing_authority": "State Education Board (PSEB/CBSE/ICSE) / DST",
+        "general_guidance": "Advisory note from the examination board confirming student falls within the top 1% cutoff.",
+        "official_portal_url": "https://online-inspire.gov.in"
+    },
+    {
+        "id": "iti_diploma_educational_marksheet",
+        "name": "ITI / Polytechnic Diploma Marksheet",
+        "name_hi": "आईटीआई / डिप्लोमा अंकतालिका",
+        "name_pa": "ਆਈ.ਟੀ.ਆਈ. / ਡਿਪਲੋਮਾ ਮਾਰਕਸ਼ੀਟ",
+        "category": "education",
+        "issuing_authority": "State Board of Technical Education / NCVT / SCVT",
+        "general_guidance": "National Trade Certificate (NTC) or State Diploma certificate for technical apprenticeship and skills.",
+        "official_portal_url": "https://www.apprenticeshipindia.gov.in"
     }
 ]
 
 
-def normalize_doc_id(raw_name: str) -> str:
-    low = (raw_name or "").lower()
+def normalize_doc_id(raw_name: str) -> Optional[str]:
+    low = (raw_name or "").lower().strip()
+    if not low:
+        return None
+    # Skip non-documents
+    if "no_document" in low or "no document" in low or "active_mobile" in low or "mobile number" in low:
+        return None
+
+    # Check explicit catalog entries
     for cat in DOCUMENTS_CATALOG:
-        if cat["id"] in low or cat["name"].lower() in low:
+        if cat["id"] == low or cat["name"].lower() == low:
             return cat["id"]
+
+    # Canonical alias mapping
+    if "photo" in low or "photograph" in low:
+        return "passport_photograph"
+    if "voter" in low or "epic" in low:
+        return "voter_id_card"
+    if "mgnrega" in low or "job card" in low or "nrega" in low:
+        return "mgnrega_job_card"
+    if "electricity" in low or "power bill" in low or "bijli" in low:
+        return "electricity_bill_latest"
+    if "ews" in low:
+        return "ews_certificate"
+    if "husband" in low and "death" in low:
+        return "husband_death_certificate"
+    if "death" in low:
+        return "death_certificate_of_breadwinner"
+    if "sowing" in low or "girdawari" in low:
+        return "sowing_certificate"
+    if "dpr" in low or "project report" in low or "business plan" in low:
+        return "detailed_project_report_dpr"
+    if "unconditional" in low or "foreign university" in low:
+        return "unconditional_offer_letter_foreign_university"
+    if "research proposal" in low:
+        return "detailed_research_proposal"
+    if "nodal institute" in low:
+        return "nodal_institute_recommendation"
+    if "class 8" in low or "8th" in low:
+        return "class_8_examination_marksheet"
+    if "previous class" in low:
+        return "previous_class_marksheet"
+    if "school enrollment" in low or "bonafide student" in low:
+        return "school_enrollment_record"
+    if "inspire" in low or "advisory" in low:
+        return "class_12_board_advisory_marksheet"
+    if "iti" in low or "polytechnic" in low or "diploma" in low:
+        return "iti_diploma_educational_marksheet"
+    if "previous" in low or "qualifying" in low or "educational qualification" in low:
+        return "previous_qualifying_exam_marksheet"
+    if "academic transcript" in low or "degree certificate" in low:
+        return "academic_transcripts_degree_certificate"
     if "aadhaar" in low:
         return "aadhaar_card"
     if "pan" in low:
@@ -195,7 +432,9 @@ def normalize_doc_id(raw_name: str) -> str:
         return "land_records_jamabandi"
     if "10th" in low or "matric" in low:
         return "class_10_marksheet"
-    if "12th" in low or "higher secondary" in low:
+    if "12th" in low or "higher secondary" in low or "class 12" in low or "class_12" in low:
+        if "advisory" in low or "inspire" in low:
+            return "class_12_board_advisory_marksheet"
         return "class_12_marksheet"
     if "college" in low or "admission" in low or "bonafide" in low:
         return "college_admission_proof"
@@ -209,10 +448,11 @@ def normalize_doc_id(raw_name: str) -> str:
         return "street_vendor_id"
     if "age" in low or "birth" in low or "senior" in low:
         return "age_proof_document"
+
     clean = "".join(c if c.isalnum() else "_" for c in low).strip("_")
     while "__" in clean:
         clean = clean.replace("__", "_")
-    return clean[:32] or "general_document"
+    return clean[:64] or "general_document"
 
 
 class SeedService:
@@ -423,6 +663,8 @@ class SeedService:
                         d_req = "mandatory" if (isinstance(d, dict) and d.get("required", True)) else "conditional"
                         
                         doc_id = normalize_doc_id(d_name)
+                        if not doc_id:
+                            continue
                         
                         # Ensure document exists in document catalogue
                         cat_doc = db.query(DBDocument).filter_by(id=doc_id).first()
@@ -480,23 +722,70 @@ class SeedService:
 
                     db.commit()
 
+            # 3b. Document catalog normalization & purge of pseudo-documents
+            legacy_doc_remaps = {
+                "passport_size_photographs": "passport_photograph",
+                "passport_sized_photographs": "passport_photograph",
+                "passport_sized_photograph": "passport_photograph",
+                "husband_s_death_certificate": "husband_death_certificate",
+                "previous_qualifying_exam_markshe": "previous_qualifying_exam_marksheet",
+                "class_12_board_examination_marks": "class_12_marksheet",
+                "class_12_board_examination_marksheet": "class_12_marksheet",
+                "academic_transcripts_degree_cert": "academic_transcripts_degree_certificate",
+                "educational_qualifications_marks": "previous_qualifying_exam_marksheet",
+                "educational_qualifications_certi": "previous_qualifying_exam_marksheet",
+                "class_12_board_advisory_markshee": "class_12_board_advisory_marksheet",
+                "iti_diploma_educational_markshee": "iti_diploma_educational_marksheet",
+                "unconditional_offer_letter_from_": "unconditional_offer_letter_foreign_university",
+            }
+            for old_id, new_id in legacy_doc_remaps.items():
+                old_mappings = db.query(DBSchemeDocument).filter_by(document_id=old_id).all()
+                for m in old_mappings:
+                    exists = db.query(DBSchemeDocument).filter_by(scheme_id=m.scheme_id, document_id=new_id).first()
+                    if not exists:
+                        m.document_id = new_id
+                    else:
+                        db.delete(m)
+                db.commit()
+                old_d = db.query(DBDocument).filter_by(id=old_id).first()
+                if old_d:
+                    db.delete(old_d)
+                    db.commit()
+
+            # Remove pseudo-documents (attributes or statuses wrongly captured as documents)
+            for pseudo_id in ["active_mobile_number", "no_document_required"]:
+                db.query(DBSchemeDocument).filter_by(document_id=pseudo_id).delete()
+                pseudo_doc = db.query(DBDocument).filter_by(id=pseudo_id).first()
+                if pseudo_doc:
+                    db.delete(pseudo_doc)
+                db.commit()
+
             # 4. Seed Default Administrator
             admin_email = settings.ADMIN_DEFAULT_EMAIL
             existing_admin = db.query(DBUser).filter_by(email=admin_email).first()
             if not existing_admin:
-                pw_hash = bcrypt.hashpw(settings.ADMIN_DEFAULT_PASSWORD.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-                admin_user = DBUser(
-                    name="System Administrator",
-                    email=admin_email,
-                    password_hash=pw_hash,
-                    role="admin",
-                    preferred_language="en",
-                    account_status="active",
-                    is_profile_complete=True
+                bootstrap_pw = settings.ADMIN_BOOTSTRAP_PASSWORD or (
+                    "CivicAdmin@2026!" if settings.APP_ENV in ("development", "test") else None
                 )
-                db.add(admin_user)
-                db.commit()
-                stats["admin_seeded"] = True
+                if not bootstrap_pw:
+                    logger.warning(
+                        "Production environment detected without ADMIN_BOOTSTRAP_PASSWORD set. "
+                        "Skipping default admin creation to prevent insecure defaults."
+                    )
+                else:
+                    pw_hash = bcrypt.hashpw(bootstrap_pw.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+                    admin_user = DBUser(
+                        name="System Administrator",
+                        email=admin_email,
+                        password_hash=pw_hash,
+                        role="admin",
+                        preferred_language="en",
+                        account_status="active",
+                        is_profile_complete=True
+                    )
+                    db.add(admin_user)
+                    db.commit()
+                    stats["admin_seeded"] = True
             else:
                 stats["admin_seeded"] = True
 

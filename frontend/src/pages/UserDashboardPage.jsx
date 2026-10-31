@@ -9,7 +9,9 @@ import {
   ArrowRight,
   LogIn,
   CheckCircle2,
-  Trash2
+  Trash2,
+  Lock,
+  Clock
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -142,6 +144,49 @@ export const UserDashboardPage = () => {
                 Eligibility Evaluations
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Quick Tools: Document Vault & Application Tracker */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '2.5rem' }}>
+          <div className="surface-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-sm)', backgroundColor: 'rgba(26, 77, 46, 0.1)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Lock size={22} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.25rem 0', color: 'var(--color-forest-dark)' }}>
+                  Personal Document Vault
+                </h3>
+                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0, lineHeight: 1.5 }}>
+                  Store your scanned certificates, Aadhaar, and education marks securely in private encrypted storage.
+                </p>
+              </div>
+            </div>
+            <Link to="/vault" className="btn btn-outline" style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.45rem 1rem', fontSize: '0.875rem' }}>
+              <span>Open Document Vault</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="surface-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-sm)', backgroundColor: 'rgba(37, 99, 235, 0.1)', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <FileCheck2 size={22} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 0.25rem 0', color: 'var(--color-forest-dark)' }}>
+                  Application Milestone Tracker
+                </h3>
+                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0, lineHeight: 1.5 }}>
+                  Log official application numbers, track department scrutiny stages, and monitor benefit disbursements.
+                </p>
+              </div>
+            </div>
+            <Link to="/applications" className="btn btn-outline" style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.45rem 1rem', fontSize: '0.875rem' }}>
+              <span>Open Application Tracker</span>
+              <ArrowRight size={14} />
+            </Link>
           </div>
         </div>
 

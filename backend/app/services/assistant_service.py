@@ -16,13 +16,19 @@ Your objective is to provide accurate, empathetic, and clear guidance on public 
 
 CRITICAL OPERATIONAL RULES:
 1. Grounded Accuracy: Only mention schemes, benefits, documents, and helplines provided in the verified context data. NEVER invent scheme names, fake URLs, non-existent benefits, or arbitrary eligibility criteria.
-2. Independent Status: Always clarify that CiviConnect is an independent information service and does not guarantee benefits or submit applications on behalf of the government.
-3. Language Directives:
+2. Demographic Reasoning & Policy Exclusions:
+   - Carefully evaluate user profile, profession, and income cues.
+   - Government employees, doctors, civil servants, and high income taxpayers are strictly excluded by government policy from BPL welfare, farmer DBT (PM-KISAN excludes institutional landholders, doctors, and govt servants), and maternity poverty cash incentives (PMMVY, JSY).
+   - When a government employee or doctor asks about their children, clarify these exclusions politely and guide them toward universal/tax-saving programs like Sukanya Samriddhi Yojana (SSY) for girl children.
+3. Procedural & Banking Guidance:
+   - When a citizen asks how to open a bank account or is unfamiliar with banking ("Mujhe bank mein account open karwana nahi aata"), provide empathetic, step-by-step guidance on Pradhan Mantri Jan Dhan Yojana (PMJDY) zero-balance accounts, documents required (Aadhaar + 2 photos), and where to go (any commercial bank branch or Bank Mitra / CSC).
+4. Independent Status: Always clarify that CiviConnect is an independent information service and does not guarantee benefits or submit applications on behalf of the government.
+5. Language Directives:
    - If the user writes or requests Punjabi (or romanized Punjabi), respond in respectful, natural Punjabi (ਪੰਜਾਬੀ).
    - If the user writes or requests Hindi (or Hinglish), respond in natural, accessible Hindi (हिंदी).
    - If English is requested, respond in clear, professional English.
-4. Privacy: Never request sensitive information such as Aadhaar numbers, bank passwords, OTPs, or biometric details.
-5. Structure: Keep answers structured with bullet points for benefits, criteria, required documents, and official portal links.
+6. Privacy: Never request sensitive information such as Aadhaar numbers, bank passwords, OTPs, or biometric details.
+7. Structure: Keep answers structured with bullet points for benefits, criteria, required documents, and official portal links.
 """
 
 
@@ -75,15 +81,21 @@ class AssistantService:
             return "hi"
         if requested_lang in ("pa", "hi"):
             return requested_lang
-        # Check Romanized Punjabi / Hindi (Hinglish) phrases
+        # Check Romanized Punjabi / Hindi (Hinglish) phrases and words
         low = user_message.lower()
-        pa_phrases = ["kidan", "kiven", "tusi", "saada pind", "vazifa chahida", "scholarship chahidi", "punjab vich", "daakhla", "yojana dasso", "mainu", "kive"]
+        pa_phrases = [
+            "kidan", "kiven", "tusi", "saada pind", "vazifa chahida", "scholarship chahidi",
+            "punjab vich", "daakhla", "yojana dasso", "mainu", "kive", "chahida", "chahidi",
+            "dasso", "kholna nahi aunda", "aunda", "vich", "hove", "ji", "gall", "daso"
+        ]
         if any(k in low for k in pa_phrases):
             return "pa"
         hi_phrases = [
-            "kaise milega", "yojana batao", "mujhe chahiye", "kya hai", "patrata kya hai",
-            "aavedan kaise kare", "ke liye", "chahiye", "paisa kab", "lagwane", "kholne",
-            "milti hai", "banane ke liye", "kya documents", "bataiye", "batao"
+            "kaise milega", "yojana batao", "mujhe", "kya hai", "patrata", "aavedan",
+            "chahiye", "paisa kab", "lagwane", "kholne", "kholna", "milti hai",
+            "kya documents", "bataiye", "batao", "nahi aata", "nahi aati", "karna hai",
+            "karwana", "mera", "meri", "mere", "humko", "kaise kare", "namaste", "madad",
+            "khulwana", "khata", "batao", "karen", "hota hai"
         ]
         if any(k in low for k in hi_phrases):
             return "hi"
@@ -96,8 +108,31 @@ class AssistantService:
         if not schemes:
             return []
 
+        # Demographic signals from message
+        is_govt_officer_or_doctor = bool(re.search(
+            r'\b(govt\s*doctor|doctor|sarkari\s*doctor|government\s*doctor|govt\s*employee|government\s*employee|civil\s*servant|ias|ips|irs|income\s*taxpayer|high\s*income)\b',
+            low
+        ))
+        has_daughters = bool(re.search(
+            r'\b(daughter|daughters|beti|betiyan|kanya|sukanya|ladki|ਧੀ|ਬੇਟੀ|कन्या|लड़की|लड़कियां)\b',
+            low
+        ))
+        is_banking_query = bool(re.search(
+            r'\b(bank|account|khata|khatabook|kholna|kholne|open\s*account|zero\s*balance|jan\s*dhan|pmjdy|rupay|debit\s*card|passbook|ਬੈਂਕ|ਖਾਤਾ|बैंक|खाता)\b',
+            low
+        ))
+
         # Comprehensive semantic & Hinglish dictionary
         INTENT_MAP = {
+            "banking": {
+                "keywords": [
+                    "bank", "account", "khata", "khatabook", "kholna", "kholne", "open account",
+                    "zero balance", "jan dhan", "pmjdy", "debit card", "rupay", "passbook",
+                    "ਬੈਂਕ", "ਖਾਤਾ", "ਖੋਲ੍ਹਣਾ", "बैंक", "खाता", "खोलना", "खुलवाना"
+                ],
+                "boost_ids": ["pmjdy"],
+                "boost_categories": ["financial_inclusion", "banking"]
+            },
             "housing": {
                 "keywords": ["awas", "housing", "pmay", "ghar", "makaan", "chhat", "home", "shelter", "colony", "ਮਕਾਨ", "ਘਰ", "ਆਵਾਸ", "आवास", "घर", "मकान"],
                 "boost_ids": ["pmay-g", "pmay-u"],
@@ -124,8 +159,8 @@ class AssistantService:
                 "boost_categories": ["employment", "business", "financial_support"]
             },
             "girl_child": {
-                "keywords": ["beti", "daughter", "girl", "kanya", "sukanya", "ladki", "shagun", "ashirwad", "marriage", "wedding", "vivah", "shadi", "ਧੀ", "ਕੰਨਿਆ", "ਵਿਆਹ", "ਸ਼ਗਨ", "बेटी", "कन्या", "विवाह", "शादी", "शगुन", "pmmvy"],
-                "boost_ids": ["sukanya-samriddhi", "punjab-ashirwad", "pmmvy", "janani-suraksha-yojana"],
+                "keywords": ["beti", "daughter", "girl", "kanya", "sukanya", "ladki", "shagun", "ashirwad", "marriage", "wedding", "vivah", "shadi", "ਧੀ", "ਕੰਨਿਆ", "ਵਿਆਹ", "ਸ਼ਗਨ", "बेटी", "कन्या", "विवाह", "शादी", "शगुन"],
+                "boost_ids": ["sukanya-samriddhi", "punjab-ashirwad"],
                 "boost_categories": ["women_and_children"]
             },
             "farmer": {
@@ -134,8 +169,8 @@ class AssistantService:
                 "boost_categories": ["agriculture", "farmers", "rural_development"]
             },
             "health": {
-                "keywords": ["ayushman", "pm-jay", "health", "hospital", "ilaj", "bima", "swasthya", "doctor", "treatment", "dawa", "sehat", "sarbat", "ਸਿਹਤ", "ਇਲਾਜ", "ਹਸਪਤਾਲ", "स्वास्थ्य", "इलाज", "अस्पताल"],
-                "boost_ids": ["pm-jay", "punjab-bhai-ghanhya", "janani-suraksha-yojana"],
+                "keywords": ["ayushman", "pm-jay", "hospital", "ilaj", "bima", "swasthya", "treatment", "dawa", "sehat", "sarbat", "patient", "illness", "bimari", "ਸਿਹਤ", "ਇਲਾਜ", "ਹਸਪਤਾਲ", "स्वास्थ्य", "इलाज", "अस्पताल", "बीमारी"],
+                "boost_ids": ["pm-jay", "punjab-bhai-ghanhya"],
                 "boost_categories": ["health", "healthcare", "insurance"]
             },
             "scholarship": {
@@ -184,11 +219,37 @@ class AssistantService:
                     elif any(w in s_text for w in intent_data["keywords"][:4]):
                         score += 25
 
+            # Banking procedural query boost
+            if is_banking_query:
+                if s.id == "pmjdy":
+                    score += 250
+                elif any(term in low for term in ["kholna", "open", "kholne", "account", "khata", "nahi aata", "nahi aunda", "kaise"]):
+                    if s.id != "pmjdy":
+                        score -= 50
+
+            # Demographic exclusion: Government doctors and officers are excluded from BPL / poverty schemes
+            if is_govt_officer_or_doctor:
+                bpl_welfare_ids = {
+                    "janani-suraksha-yojana", "pmmvy", "punjab-ashirwad", "pm-kisan",
+                    "pmay-g", "pmay-u", "punjab-atta-dal", "punjab-smart-ration-card",
+                    "nsap-ignwps", "nsap-igndps", "nsap-ignoaps", "pm-sym",
+                    "dr-ambedkar-post-matric-scholarship-ews"
+                }
+                if s.id in bpl_welfare_ids:
+                    score -= 500
+
+                # Daughters of high earners / govt professionals qualify for Sukanya Samriddhi Yojana
+                if has_daughters and s.id == "sukanya-samriddhi":
+                    score += 300
+
             # Direct token matching (including Indic Unicode tokens)
             tokens = re.findall(r'[\w\u0900-\u097F\u0A00-\u0A7F]+', low)
             stop_words = {
                 "hai", "kya", "liye", "sarkar", "paisa", "kaise", "milega", "chahiye", "batao",
-                "the", "and", "for", "aurat", "kitni", "kab", "karo", "kisi", "meri", "mera", "mere"
+                "the", "and", "for", "aurat", "kitni", "kab", "karo", "kisi", "meri", "mera", "mere",
+                "bank", "account", "scheme", "yojana", "govt", "government", "sarkari", "mein", "nahi",
+                "aata", "karna", "krna", "please", "help", "detail", "info", "doctor", "have", "with",
+                "daughters", "sons", "children", "bache", "bachi"
             }
             for t in tokens:
                 if len(t) >= 3 and t not in stop_words:
@@ -223,6 +284,89 @@ class AssistantService:
         user_profile: Optional[Dict[str, Any]] = None
     ) -> str:
         """High-craft deterministic response grounded in verified database schemes."""
+        low = message.lower()
+        is_banking_query = any(k in low for k in ["bank", "account", "khata", "kholna", "kholne", "open", "nahi aata", "nahi aunda", "ਬੈਂਕ", "ਖਾਤਾ", "बैंक", "खाता"])
+        is_govt_officer_or_doctor = bool(re.search(
+            r'\b(govt\s*doctor|doctor|sarkari\s*doctor|government\s*doctor|govt\s*employee|government\s*employee|civil\s*servant|ias|ips|irs|taxpayer|high\s*income)\b',
+            low
+        ))
+        has_daughters = bool(re.search(r'\b(daughter|daughters|beti|betiyan|kanya|sukanya|ladki|ਧੀ|ਬੇਟੀ|कन्या)\b', low))
+
+        # Specialized banking account opening guidance
+        if is_banking_query and any(s.id == "pmjdy" for s in schemes):
+            if lang == "pa":
+                return (
+                    "### ਬੈਂਕ ਵਿੱਚ ਖਾਤਾ ਖੋਲ੍ਹਣ ਲਈ ਆਸਾਨ ਮਾਰਗਦਰਸ਼ਨ (PMJDY)\n\n"
+                    "ਜੇਕਰ ਤੁਹਾਨੂੰ ਬੈਂਕ ਵਿੱਚ ਖਾਤਾ ਖੋਲ੍ਹਣਾ ਨਹੀਂ ਆਉਂਦਾ, ਤਾਂ ਤੁਸੀਂ **ਪ੍ਰਧਾਨ ਮੰਤਰੀ ਜਨ ਧਨ ਯੋਜਨਾ (PMJDY)** ਤਹਿਤ ਬਿਲਕੁਲ ਮੁਫ਼ਤ (Zero Balance) ਖਾਤਾ ਖੁਲ੍ਹਵਾ ਸਕਦੇ ਹੋ:\n\n"
+                    "**ਖਾਤਾ ਖੋਲ੍ਹਣ ਦੇ ਸੌਖੇ ਕਦਮ:**\n"
+                    "1. **ਨਜ਼ਦੀਕੀ ਬੈਂਕ ਜਾਂ ਬੈਂਕ ਮਿੱਤਰ (CSC) ਜਾਓ:** ਕਿਸੇ ਵੀ ਸਰਕਾਰੀ ਬੈਂਕ (ਜਿਵੇਂ SBI, PNB) ਜਾਂ ਪ੍ਰਾਈਵੇਟ ਬੈਂਕ ਦੀ ਸ਼ਾਖਾ ਵਿੱਚ ਜਾਓ।\n"
+                    "2. **ਜਨ ਧਨ ਖਾਤਾ ਫਾਰਮ ਲਵੋ:** ਬੈਂਕ ਕਾਊਂਟਰ ਤੋਂ PMJDY ਖਾਤਾ ਖੋਲ੍ਹਣ ਦਾ ਫਾਰਮ ਮੁਫ਼ਤ ਪ੍ਰਾਪਤ ਕਰੋ।\n"
+                    "3. **ਲੋੜੀਂਦੇ ਦਸਤਾਵੇਜ਼:**\n"
+                    "   - ਆਪਣਾ **ਆਧਾਰ ਕਾਰਡ** (ਸਭ ਤੋਂ ਜ਼ਰੂਰੀ ਪਛਾਣ ਤੇ ਪਤੇ ਦਾ ਸਬੂਤ)।\n"
+                    "   - 2 ਤਾਜ਼ਾ ਪਾਸਪੋਰਟ ਸਾਈਜ਼ ਫੋਟੋਆਂ।\n"
+                    "   - ਜੇਕਰ ਆਧਾਰ ਕਾਰਡ ਨਹੀਂ ਹੈ ਤਾਂ ਵੋਟਰ ਕਾਰਡ ਜਾਂ ਮਨਰੇਗਾ ਜੌਬ ਕਾਰਡ ਵੀ ਚੱਲ ਸਕਦਾ ਹੈ।\n"
+                    "4. **ਫਾਰਮ ਜਮ੍ਹਾਂ ਕਰਵਾਓ:** ਫਾਰਮ ਭਰ ਕੇ ਅੰਗੂਠਾ ਜਾਂ ਦਸਤਖ਼ਤ ਕਰੋ। ਕੋਈ ਵੀ ਪੈਸਾ ਜਮ੍ਹਾਂ ਕਰਵਾਉਣ ਦੀ ਲੋੜ ਨਹੀਂ ਹੈ (ਜ਼ੀਰੋ ਬੈਲੇਂਸ)।\n"
+                    "5. **ਲਾਭ:** ਮੁਫ਼ਤ ਪਾਸਬੁੱਕ, RuPay ਡੈਬਿਟ ਕਾਰਡ (₹2 ਲੱਖ ਦੁਰਘਟਨਾ ਬੀਮਾ ਸਮੇਤ) ਅਤੇ ਸਰਕਾਰੀ ਸਬਸਿਡੀਆਂ ਸਿੱਧੇ ਖਾਤੇ ਵਿੱਚ ਪ੍ਰਾਪਤ ਹੋਣਗੀਆਂ।\n\n"
+                    "- **ਅਧਿਕਾਰਤ ਪੋਰਟਲ:** [https://pmjdy.gov.in](https://pmjdy.gov.in)\n"
+                    "- **ਰਾਸ਼ਟਰੀ ਟੋਲ-ਫ੍ਰੀ ਹੈਲਪਲਾਈਨ:** 1800-180-1111\n\n"
+                    "*ਨੋਟ: CiviConnect ਇੱਕ ਸੁਤੰਤਰ ਜਨਤਕ ਸੂਚਨਾ ਸੇਵਾ ਹੈ।*"
+                )
+            elif lang == "hi":
+                return (
+                    "### बैंक में खाता खोलने के लिए आसान मार्गदर्शन (PMJDY)\n\n"
+                    "यदि आपको बैंक में खाता खोलना नहीं आता, तो घबराने की कोई बात नहीं है। आप **प्रधानमंत्री जन धन योजना (PMJDY)** के तहत किसी भी बैंक में बिल्कुल मुफ्त (Zero Balance) खाता खुलवा सकते हैं:\n\n"
+                    "**खाता खुलवाने के आसान चरण:**\n"
+                    "1. **नजदीकी बैंक या बैंक मित्र (CSC केंद्र) जाएं:** अपने नजदीकी किसी भी राष्ट्रीयकृत बैंक (जैसे SBI, PNB, Bank of Baroda) या अधिकृत बैंक मित्र कियोस्क पर जाएं।\n"
+                    "2. **जन धन खाता फॉर्म प्राप्त करें:** बैंक कर्मचारी से जन धन (PMJDY) खाता खोलने का फॉर्म मांगें (यह पूरी तरह निःशुल्क है)।\n"
+                    "3. **आवश्यक दस्तावेज संलग्न करें:**\n"
+                    "   - **आधार कार्ड** की स्व-प्रमाणित फोटोकॉपी (आधार होने पर किसी अन्य दस्तावेज की आवश्यकता नहीं है)।\n"
+                    "   - 2 हालिया पासपोर्ट साइज रंगीन फोटो।\n"
+                    "   - (वैकल्पिक) यदि आधार नहीं है तो वोटर आईडी, नरेगा जॉब कार्ड, या ड्राइविंग लाइसेंस मान्य है।\n"
+                    "4. **बायोमेट्रिक या हस्ताक्षर:** फॉर्म भरकर बैंक अधिकारी को दें और बायोमेट्रिक या हस्ताक्षर सत्यापन करवाएं। कोई न्यूनतम जमा राशि आवश्यक नहीं है।\n"
+                    "5. **पासबुक और RuPay डेबिट कार्ड:** आपका खाता खुल जाएगा और आपको मुफ्त पासबुक व RuPay डेबिट कार्ड (₹2 लाख दुर्घटना बीमा कवर सहित) प्राप्त होगा।\n\n"
+                    "- **आधिकारिक पोर्टल:** [https://pmjdy.gov.in](https://pmjdy.gov.in)\n"
+                    "- **राष्ट्रीय हेल्पलाइन:** 1800-180-1111\n\n"
+                    "*सूचना: CiviConnect एक स्वतंत्र सार्वजनिक सेवा नेविगेटर है और कोई सरकारी शुल्क नहीं लेता।*"
+                )
+            else:
+                return (
+                    "### Step-by-Step Guidance on Opening a Bank Account (PMJDY)\n\n"
+                    "If you are unfamiliar with opening a bank account, you can open a completely free, zero-balance account under the **Pradhan Mantri Jan Dhan Yojana (PMJDY)**:\n\n"
+                    "**How to Open Your Account:**\n"
+                    "1. **Visit Any Bank Branch or Bank Mitra (CSC):** Walk into any commercial bank branch (SBI, PNB, Bank of Baroda, etc.) or authorized Common Service Centre / Bank Mitra kiosk.\n"
+                    "2. **Request a PMJDY Account Opening Form:** The form is available free of charge at every bank branch in English and regional languages.\n"
+                    "3. **Attach Required Documents:**\n"
+                    "   - **Aadhaar Card** (Primary KYC document; satisfies both identity and address proof).\n"
+                    "   - Two recent passport-sized color photographs.\n"
+                    "   - *(Alternative if Aadhaar is unavailable)*: Voter ID card, NREGA job card, or Driving Licence.\n"
+                    "4. **Biometric Verification:** Submit the completed form with self-attested document copies. No initial deposit is required (Zero Balance).\n"
+                    "5. **Receive Your Passbook & Card:** You will receive a passbook and a free RuPay Debit Card with built-in Rs. 2 Lakh accidental insurance cover.\n\n"
+                    "- **Official Portal:** [https://pmjdy.gov.in](https://pmjdy.gov.in)\n"
+                    "- **National Helpline:** 1800-180-1111\n\n"
+                    "*Note: CiviConnect is an independent public service information navigator.*"
+                )
+
+        # Specialized demographic guidance for government employee / doctor with children
+        if is_govt_officer_or_doctor and has_daughters:
+            return (
+                "### Public Policy Eligibility Notice for Government Professionals\n\n"
+                "As a **government-employed doctor/officer**, please note that by official statutory guidelines, you are **excluded** from income-capped welfare programs, poverty-alleviation grants, and farmer income support (such as PM-KISAN, PMMVY maternity cash incentives, or state BPL marriage assistance).\n\n"
+                "### Recommended Scheme for Your Daughters: Sukanya Samriddhi Yojana (SSY)\n\n"
+                "As an Indian citizen and parent, you are fully eligible to secure your daughters' future under the government's flagship **Sukanya Samriddhi Yojana (SSY)**:\n\n"
+                "- **Key Benefits:**\n"
+                "  - High government-guaranteed interest rate of **8.2% per annum** compounded annually.\n"
+                "  - **Triple Tax Exemption (EEE):** Investments up to Rs. 1.5 Lakh per financial year qualify for Section 80C tax deductions, interest earned is tax-free, and maturity proceeds are completely exempt from tax.\n"
+                "  - Accounts can be opened for up to 2 girl children aged 10 years or younger.\n"
+                "  - Matures 21 years from account opening, with 50% partial withdrawal permitted after age 18 for higher education.\n"
+                "- **Required Documents:**\n"
+                "  - Birth Certificate of the girl child (issued by Municipal Corporation / Panchayat).\n"
+                "  - Identity and Address Proof of the parent/guardian (Aadhaar Card / PAN Card).\n"
+                "  - Passport-sized photograph of parent and child.\n"
+                "- **Where to Apply:** Any Post Office branch or authorized commercial bank (SBI, PNB, BoB, ICICI, HDFC).\n"
+                "- **Official Portal:** [https://www.indiapost.gov.in](https://www.indiapost.gov.in)\n\n"
+                "*Note: For your sons, universal merit scholarships (such as National Scholarship Portal schemes) may be explored based on academic merit upon reaching qualifying classes.*"
+            )
+
         if lang == "pa":
             greeting = "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! CiviConnect ਸਰਕਾਰੀ ਸਕੀਮਾਂ ਬਾਰੇ ਤੁਹਾਡੀ ਮਦਦ ਲਈ ਹਾਜ਼ਰ ਹੈ।"
             intro = f"ਤੁਹਾਡੀ ਪੁੱਛਗਿੱਛ ਦੇ ਆਧਾਰ 'ਤੇ, ਅਸੀਂ ਸਰਕਾਰੀ ਡਾਟਾਬੇਸ ਵਿੱਚੋਂ ਹੇਠ ਲਿਖੀਆਂ ਪ੍ਰਮਾਣਿਤ ਸਕੀਮਾਂ ਲੱਭੀਆਂ ਹਨ:"

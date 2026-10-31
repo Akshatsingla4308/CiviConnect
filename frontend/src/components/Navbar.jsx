@@ -7,6 +7,8 @@ import {
   FileText,
   MapPin,
   LayoutDashboard,
+  Lock,
+  FileCheck2,
   ShieldAlert,
   LogIn,
   LogOut,
@@ -509,24 +511,62 @@ export const Navbar = () => {
               </Link>
 
               {isAuthenticated && (
-                <Link
-                  to="/dashboard"
-                  onClick={() => setMobileMenuOpen(false)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    fontWeight: 600,
-                    fontSize: '0.9rem',
-                    padding: '0.4rem 0.5rem',
-                    borderRadius: 'var(--radius-xs)',
-                    color: isActive('/dashboard') ? 'var(--color-terracotta)' : 'var(--color-forest-dark)',
-                    backgroundColor: isActive('/dashboard') ? 'var(--color-forest-surface)' : 'transparent',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <LayoutDashboard size={17} /> {t('nav.dashboard')}
-                </Link>
+                <>
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontWeight: 600,
+                      fontSize: '0.9rem',
+                      padding: '0.4rem 0.5rem',
+                      borderRadius: 'var(--radius-xs)',
+                      color: isActive('/dashboard') ? 'var(--color-terracotta)' : 'var(--color-forest-dark)',
+                      backgroundColor: isActive('/dashboard') ? 'var(--color-forest-surface)' : 'transparent',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    <LayoutDashboard size={17} /> {t('nav.dashboard')}
+                  </Link>
+                  <Link
+                    to="/vault"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontWeight: 600,
+                      fontSize: '0.9rem',
+                      padding: '0.4rem 0.5rem',
+                      borderRadius: 'var(--radius-xs)',
+                      color: isActive('/vault') ? 'var(--color-terracotta)' : 'var(--color-forest-dark)',
+                      backgroundColor: isActive('/vault') ? 'var(--color-forest-surface)' : 'transparent',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    <Lock size={17} /> {t('nav.vault')}
+                  </Link>
+                  <Link
+                    to="/applications"
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontWeight: 600,
+                      fontSize: '0.9rem',
+                      padding: '0.4rem 0.5rem',
+                      borderRadius: 'var(--radius-xs)',
+                      color: isActive('/applications') ? 'var(--color-terracotta)' : 'var(--color-forest-dark)',
+                      backgroundColor: isActive('/applications') ? 'var(--color-forest-surface)' : 'transparent',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    <FileCheck2 size={17} /> {t('nav.applications')}
+                  </Link>
+                </>
               )}
 
               {isAdmin && (

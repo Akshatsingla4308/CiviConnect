@@ -18,6 +18,8 @@ import { ChecklistsPage } from './pages/ChecklistsPage';
 import { StateDirectoryPage } from './pages/StateDirectoryPage';
 import { ApplicationGuidesPage } from './pages/ApplicationGuidesPage';
 import { UserDashboardPage } from './pages/UserDashboardPage';
+import { DocumentVaultPage } from './pages/DocumentVaultPage';
+import { ApplicationTrackerPage } from './pages/ApplicationTrackerPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { ProfilePage } from './pages/ProfilePage';
@@ -48,6 +50,8 @@ export function App() {
                   <Route path="/directory" element={<StateDirectoryPage />} />
                   <Route path="/guides" element={<ApplicationGuidesPage />} />
                   <Route path="/dashboard" element={<UserDashboardPage />} />
+                  <Route path="/vault" element={<DocumentVaultPage />} />
+                  <Route path="/applications" element={<ApplicationTrackerPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<SignupPage />} />
                   <Route path="/profile" element={<ProfilePage />} />

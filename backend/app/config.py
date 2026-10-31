@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 
@@ -43,7 +43,15 @@ class Settings(BaseSettings):
 
     # Admin Defaults (for initial secure bootstrap)
     ADMIN_DEFAULT_EMAIL: str = os.getenv("ADMIN_DEFAULT_EMAIL", "admin@civiconnect.in")
-    ADMIN_DEFAULT_PASSWORD: str = os.getenv("ADMIN_DEFAULT_PASSWORD", "CivicAdmin@2026!")
+    ADMIN_BOOTSTRAP_PASSWORD: Optional[str] = os.getenv("ADMIN_BOOTSTRAP_PASSWORD") or os.getenv("ADMIN_DEFAULT_PASSWORD")
+
+    @property
+    def ADMIN_DEFAULT_PASSWORD(self) -> str:
+        if self.ADMIN_BOOTSTRAP_PASSWORD:
+            return self.ADMIN_BOOTSTRAP_PASSWORD
+        if self.APP_ENV in ("development", "test"):
+            return "CivicAdmin@2026!"
+        return ""
 
     # CORS
     FRONTEND_ORIGINS: List[str] = [
@@ -51,6 +59,7 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5173",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "https://civiconnect.vercel.app",
     ]
 
     model_config = {

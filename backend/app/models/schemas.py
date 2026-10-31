@@ -1,5 +1,6 @@
+import re
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 # ==============================================================================
@@ -9,8 +10,19 @@ from pydantic import BaseModel, EmailStr, Field
 class UserRegisterRequest(BaseModel):
     name: str = Field(..., min_length=2, max_length=120)
     email: EmailStr
-    password: str = Field(..., min_length=6, max_length=128)
+    password: str = Field(..., min_length=8, max_length=128)
     preferred_language: Optional[str] = "en"
+
+    @field_validator("password")
+    @classmethod
+    def validate_password_strength(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters long.")
+        if not re.search(r"[A-Za-z]", v):
+            raise ValueError("Password must contain at least one letter.")
+        if not re.search(r"[\d\W_]", v):
+            raise ValueError("Password must contain at least one digit or special character.")
+        return v
 
 
 class UserLoginRequest(BaseModel):
@@ -218,6 +230,72 @@ class ChecklistResponse(BaseModel):
     items: List[ChecklistItem]
     completion_percentage: int
     updated_at: str
+
+
+# ==============================================================================
+# VAULT & APPLICATION SCHEMAS
+# ==============================================================================
+
+class VaultDocumentResponse(BaseModel):
+    id: str
+    user_id: str
+    document_name: str
+    document_type: str
+    file_name: str
+    file_size_bytes: int
+    mime_type: str
+    sha256_checksum: Optional[str] = None
+    notes: Optional[str] = None
+    created_at: str
+    updated_at: str
+
+
+class VaultDocumentListResponse(BaseModel):
+    total: int
+    items: List[VaultDocumentResponse]
+
+
+class ApplicationCreateRequest(BaseModel):
+    scheme_id: str
+    scheme_name: str
+    application_number: Optional[str] = None
+    status: str = "Draft"  # Draft, Submitted, Under Scrutiny, Approved, Disbursed, Rejected, Action Required
+    submission_date: Optional[str] = None
+    department: Optional[str] = None
+    portal_url: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class ApplicationUpdateRequest(BaseModel):
+    status: Optional[str] = None
+    application_number: Optional[str] = None
+    submission_date: Optional[str] = None
+    department: Optional[str] = None
+    portal_url: Optional[str] = None
+    notes: Optional[str] = None
+    status_note: Optional[str] = None
+
+
+class ApplicationResponse(BaseModel):
+    id: str
+    user_id: str
+    scheme_id: str
+    scheme_name: str
+    application_number: Optional[str] = None
+    status: str
+    submission_date: Optional[str] = None
+    department: Optional[str] = None
+    portal_url: Optional[str] = None
+    notes: Optional[str] = None
+    history: List[Dict[str, Any]] = []
+    created_at: str
+    updated_at: str
+
+
+class ApplicationListResponse(BaseModel):
+    total: int
+    items: List[ApplicationResponse]
+
 
 
 # ==============================================================================
