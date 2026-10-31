@@ -94,3 +94,35 @@ def test_cors_origin_allowed(client):
     assert res.status_code in (200, 204)
     assert res.headers.get("access-control-allow-origin") == "http://localhost:5173"
 
+    # Production Vercel origin
+    res_prod = client.options(
+        "/api/schemes",
+        headers={
+            "Origin": "https://civi-connect-seven.vercel.app",
+            "Access-Control-Request-Method": "GET"
+        }
+    )
+    assert res_prod.status_code in (200, 204)
+    assert res_prod.headers.get("access-control-allow-origin") == "https://civi-connect-seven.vercel.app"
+
+    # Preview Vercel branch origin
+    res_preview = client.options(
+        "/api/schemes",
+        headers={
+            "Origin": "https://civi-connect-preview-123.vercel.app",
+            "Access-Control-Request-Method": "GET"
+        }
+    )
+    assert res_preview.status_code in (200, 204)
+    assert res_preview.headers.get("access-control-allow-origin") == "https://civi-connect-preview-123.vercel.app"
+
+    # Disallowed external origin
+    res_disallowed = client.options(
+        "/api/schemes",
+        headers={
+            "Origin": "https://unauthorized-external-domain.com",
+            "Access-Control-Request-Method": "GET"
+        }
+    )
+    assert res_disallowed.headers.get("access-control-allow-origin") is None
+

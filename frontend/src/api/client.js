@@ -1,4 +1,6 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+import { buildApiUrl, resolveApiBaseUrl } from './config.js';
+
+export { buildApiUrl, resolveApiBaseUrl };
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('civiconnect_token');
@@ -31,21 +33,21 @@ export const api = {
   // Auth
   auth: {
     register: (data) =>
-      fetch(`${BASE_URL}/api/auth/register`, {
+      fetch(buildApiUrl('/api/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       }).then(handleResponse),
 
     login: (credentials) =>
-      fetch(`${BASE_URL}/api/auth/login`, {
+      fetch(buildApiUrl('/api/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
       }).then(handleResponse),
 
     getMe: () =>
-      fetch(`${BASE_URL}/api/auth/me`, {
+      fetch(buildApiUrl('/api/auth/me'), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
   },
@@ -62,27 +64,29 @@ export const api = {
       if (params.limit) query.append('limit', params.limit);
       if (params.offset) query.append('offset', params.offset);
 
-      return fetch(`${BASE_URL}/api/schemes?${query.toString()}`).then(handleResponse);
+      const qs = query.toString();
+      const endpoint = qs ? `/api/schemes?${qs}` : '/api/schemes';
+      return fetch(buildApiUrl(endpoint)).then(handleResponse);
     },
 
     getCategories: () =>
-      fetch(`${BASE_URL}/api/schemes/categories`).then(handleResponse),
+      fetch(buildApiUrl('/api/schemes/categories')).then(handleResponse),
 
     getById: (id) =>
-      fetch(`${BASE_URL}/api/schemes/${id}`).then(handleResponse),
+      fetch(buildApiUrl(`/api/schemes/${id}`)).then(handleResponse),
   },
 
   // Eligibility Engine
   eligibility: {
     checkSingle: (schemeId, profile) =>
-      fetch(`${BASE_URL}/api/eligibility/check`, {
+      fetch(buildApiUrl('/api/eligibility/check'), {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ scheme_id: schemeId, profile }),
       }).then(handleResponse),
 
     evaluateAll: (profile) =>
-      fetch(`${BASE_URL}/api/eligibility/evaluate-all`, {
+      fetch(buildApiUrl('/api/eligibility/evaluate-all'), {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ profile }),
@@ -95,27 +99,29 @@ export const api = {
       const query = new URLSearchParams();
       if (category) query.append('category', category);
       if (search) query.append('search', search);
-      return fetch(`${BASE_URL}/api/documents?${query.toString()}`).then(handleResponse);
+      const qs = query.toString();
+      const endpoint = qs ? `/api/documents?${qs}` : '/api/documents';
+      return fetch(buildApiUrl(endpoint)).then(handleResponse);
     },
 
     getById: (id) =>
-      fetch(`${BASE_URL}/api/documents/${id}`).then(handleResponse),
+      fetch(buildApiUrl(`/api/documents/${id}`)).then(handleResponse),
   },
 
   // Checklists
   checklists: {
     list: () =>
-      fetch(`${BASE_URL}/api/checklists`, {
+      fetch(buildApiUrl('/api/checklists'), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     getForScheme: (schemeId) =>
-      fetch(`${BASE_URL}/api/checklists/${schemeId}`, {
+      fetch(buildApiUrl(`/api/checklists/${schemeId}`), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     update: (schemeId, items, status = null) =>
-      fetch(`${BASE_URL}/api/checklists/${schemeId}`, {
+      fetch(buildApiUrl(`/api/checklists/${schemeId}`), {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify({ items, status }),
@@ -125,54 +131,54 @@ export const api = {
   // User Workspace
   user: {
     getProfile: () =>
-      fetch(`${BASE_URL}/api/user/profile`, {
+      fetch(buildApiUrl('/api/user/profile'), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     updateProfile: (profileData) =>
-      fetch(`${BASE_URL}/api/user/profile`, {
+      fetch(buildApiUrl('/api/user/profile'), {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify(profileData),
       }).then(handleResponse),
 
     getSavedSchemes: () =>
-      fetch(`${BASE_URL}/api/user/saved-schemes`, {
+      fetch(buildApiUrl('/api/user/saved-schemes'), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     saveScheme: (schemeId, notes = '') =>
-      fetch(`${BASE_URL}/api/user/saved-schemes/${schemeId}`, {
+      fetch(buildApiUrl(`/api/user/saved-schemes/${schemeId}`), {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ notes }),
       }).then(handleResponse),
 
     removeSavedScheme: (schemeId) =>
-      fetch(`${BASE_URL}/api/user/saved-schemes/${schemeId}`, {
+      fetch(buildApiUrl(`/api/user/saved-schemes/${schemeId}`), {
         method: 'DELETE',
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     getAssessments: () =>
-      fetch(`${BASE_URL}/api/user/assessments`, {
+      fetch(buildApiUrl('/api/user/assessments'), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     recordAssessment: (data) =>
-      fetch(`${BASE_URL}/api/user/assessments`, {
+      fetch(buildApiUrl('/api/user/assessments'), {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(data),
       }).then(handleResponse),
 
     getApplications: () =>
-      fetch(`${BASE_URL}/api/user/applications`, {
+      fetch(buildApiUrl('/api/user/applications'), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     createApplication: (data) =>
-      fetch(`${BASE_URL}/api/user/applications`, {
+      fetch(buildApiUrl('/api/user/applications'), {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(data),
@@ -182,7 +188,7 @@ export const api = {
   // AI Assistant
   assistant: {
     chat: (message, sessionId = null, language = 'en', userProfile = null) =>
-      fetch(`${BASE_URL}/api/assistant/chat`, {
+      fetch(buildApiUrl('/api/assistant/chat'), {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({
@@ -194,13 +200,13 @@ export const api = {
       }).then(handleResponse),
 
     getStatus: () =>
-      fetch(`${BASE_URL}/api/assistant/status`).then(handleResponse),
+      fetch(buildApiUrl('/api/assistant/status')).then(handleResponse),
   },
 
   // Document Vault
   vault: {
     list: () =>
-      fetch(`${BASE_URL}/api/vault`, {
+      fetch(buildApiUrl('/api/vault'), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
@@ -208,18 +214,18 @@ export const api = {
       const token = localStorage.getItem('civiconnect_token');
       const headers = {};
       if (token) headers['Authorization'] = `Bearer ${token}`;
-      return fetch(`${BASE_URL}/api/vault/upload`, {
+      return fetch(buildApiUrl('/api/vault/upload'), {
         method: 'POST',
         headers,
         body: formData,
       }).then(handleResponse);
     },
 
-    downloadUrl: (docId) => `${BASE_URL}/api/vault/${docId}/download`,
+    downloadUrl: (docId) => buildApiUrl(`/api/vault/${docId}/download`),
 
     downloadBlob: async (docId, fileName) => {
       const token = localStorage.getItem('civiconnect_token');
-      const res = await fetch(`${BASE_URL}/api/vault/${docId}/download`, {
+      const res = await fetch(buildApiUrl(`/api/vault/${docId}/download`), {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (!res.ok) throw new Error('Failed to download document');
@@ -235,7 +241,7 @@ export const api = {
     },
 
     delete: (docId) =>
-      fetch(`${BASE_URL}/api/vault/${docId}`, {
+      fetch(buildApiUrl(`/api/vault/${docId}`), {
         method: 'DELETE',
         headers: getAuthHeaders(),
       }).then(handleResponse),
@@ -244,31 +250,31 @@ export const api = {
   // Citizen Application Tracker
   applications: {
     list: () =>
-      fetch(`${BASE_URL}/api/applications`, {
+      fetch(buildApiUrl('/api/applications'), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     getById: (appId) =>
-      fetch(`${BASE_URL}/api/applications/${appId}`, {
+      fetch(buildApiUrl(`/api/applications/${appId}`), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     create: (data) =>
-      fetch(`${BASE_URL}/api/applications`, {
+      fetch(buildApiUrl('/api/applications'), {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(data),
       }).then(handleResponse),
 
     update: (appId, data) =>
-      fetch(`${BASE_URL}/api/applications/${appId}`, {
+      fetch(buildApiUrl(`/api/applications/${appId}`), {
         method: 'PATCH',
         headers: getAuthHeaders(),
         body: JSON.stringify(data),
       }).then(handleResponse),
 
     delete: (appId) =>
-      fetch(`${BASE_URL}/api/applications/${appId}`, {
+      fetch(buildApiUrl(`/api/applications/${appId}`), {
         method: 'DELETE',
         headers: getAuthHeaders(),
       }).then(handleResponse),
@@ -277,17 +283,17 @@ export const api = {
   // Admin
   admin: {
     getStats: () =>
-      fetch(`${BASE_URL}/api/admin/stats`, {
+      fetch(buildApiUrl('/api/admin/stats'), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     getAuditLogs: () =>
-      fetch(`${BASE_URL}/api/admin/audit-logs`, {
+      fetch(buildApiUrl('/api/admin/audit-logs'), {
         headers: getAuthHeaders(),
       }).then(handleResponse),
 
     toggleVerification: (schemeId, status) =>
-      fetch(`${BASE_URL}/api/admin/schemes/${schemeId}/verification`, {
+      fetch(buildApiUrl(`/api/admin/schemes/${schemeId}/verification`), {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify({ status }),
@@ -297,9 +303,9 @@ export const api = {
   // System
   system: {
     getHealth: () =>
-      fetch(`${BASE_URL}/api/system/health`).then(handleResponse),
+      fetch(buildApiUrl('/api/system/health')).then(handleResponse),
 
     getStates: () =>
-      fetch(`${BASE_URL}/api/system/states`).then(handleResponse),
+      fetch(buildApiUrl('/api/system/states')).then(handleResponse),
   },
 };
